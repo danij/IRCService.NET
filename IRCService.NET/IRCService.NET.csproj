@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5C8244DF-12A2-43BD-AB91-D9F955478140}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IRCServiceNET</RootNamespace>
+    <AssemblyName>IRCServiceNET</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Actions\NetworkAction.cs" />
+    <Compile Include="Actions\ServerAction.cs" />
+    <Compile Include="Entities\Ban.cs" />
+    <Compile Include="Entities\ChannelEntry.cs" />
+    <Compile Include="Entities\ChannelModes.cs" />
+    <Compile Include="Entities\IHasNumeric.cs" />
+    <Compile Include="Actions\UserAction.cs" />
+    <Compile Include="EventArgs.cs" />
+    <Compile Include="Helpers\Base64Converter.cs" />
+    <Compile Include="Entities\Channel.cs" />
+    <Compile Include="Helpers\MathHelper.cs" />
+    <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="Helpers\WildCardHelper.cs" />
+    <Compile Include="IRCConstants.cs" />
+    <Compile Include="IRCService.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="Plugins\IRCServicePlugin.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protocols\AcknowledgeBurstCommand.cs" />
+    <Compile Include="Protocols\AuthenticateUserCommand.cs" />
+    <Compile Include="Protocols\ChannelBurstCommand.cs" />
+    <Compile Include="Protocols\IParser.cs" />
+    <Compile Include="Protocols\ServerAuthenticationCommand.cs" />
+    <Compile Include="Protocols\ChangeChannelModeCommand.cs" />
+    <Compile Include="Protocols\ChangeNickCommand.cs" />
+    <Compile Include="Protocols\ChangeUserModeCommand.cs" />
+    <Compile Include="Protocols\EndOfBurstCommand.cs" />
+    <Compile Include="Protocols\JoinChannelCommand.cs" />
+    <Compile Include="Protocols\ICommand.cs" />
+    <Compile Include="Protocols\ICommandFactory.cs" />
+    <Compile Include="Protocols\KickUserCommand.cs" />
+    <Compile Include="Protocols\NewServerCommand.cs" />
+    <Compile Include="Protocols\NewUserCommand.cs" />
+    <Compile Include="Protocols\PartChannelCommand.cs" />
+    <Compile Include="Protocols\PingReplyCommand.cs" />
+    <Compile Include="Protocols\SendMessageCommand.cs" />
+    <Compile Include="Protocols\ServerIntroductionCommand.cs" />
+    <Compile Include="Protocols\ServerQuitCommand.cs" />
+    <Compile Include="Protocols\UserDisconnectCommand.cs" />
+    <Compile Include="Protocols\UserQuitCommand.cs" />
+    <Compile Include="Entities\Server.cs" />
+    <Compile Include="Helpers\UnixTimestamp.cs" />
+    <Compile Include="Entities\User.cs" />
+    <Compile Include="ServiceStatus.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

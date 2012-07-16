@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F2F2AFFD-0A6A-4CA4-8F47-509423E59BDD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IRCServiceNET.Protocols.P10</RootNamespace>
+    <AssemblyName>IRCServiceNET.Protocols.P10</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="P10\P10AcknowledgeBurstCommand.cs" />
+    <Compile Include="P10\P10AuthenticateUserCommand.cs" />
+    <Compile Include="P10\P10ChangeChannelModeCommand.cs" />
+    <Compile Include="P10\P10ChangeNickCommand.cs" />
+    <Compile Include="P10\P10ChangeUserModeCommand.cs" />
+    <Compile Include="P10\P10ChannelBurstCommand.cs" />
+    <Compile Include="P10\P10CommandFactory.cs" />
+    <Compile Include="P10\P10EndOfBurstCommand.cs" />
+    <Compile Include="P10\P10JoinChannelCommand.cs" />
+    <Compile Include="P10\P10KickUserCommand.cs" />
+    <Compile Include="P10\P10NewServerCommand.cs" />
+    <Compile Include="P10\P10NewUserCommand.cs" />
+    <Compile Include="P10\P10PartChannelCommand.cs" />
+    <Compile Include="P10\P10PingReplyCommand.cs" />
+    <Compile Include="P10\P10SendMessageCommand.cs" />
+    <Compile Include="P10\P10ServerAuthenticationCommand.cs" />
+    <Compile Include="P10\P10ServerIntroductionCommand.cs" />
+    <Compile Include="P10\P10ServerQuitCommand.cs" />
+    <Compile Include="P10\P10UserDisconnectCommand.cs" />
+    <Compile Include="P10\P10UserQuitCommand.cs" />
+    <Compile Include="P10\Parsers\AC_Parser.cs" />
+    <Compile Include="P10\Parsers\B_Parser.cs" />
+    <Compile Include="P10\Parsers\CM_Parser.cs" />
+    <Compile Include="P10\Parsers\CommandParser.cs" />
+    <Compile Include="P10\Parsers\C_Parser.cs" />
+    <Compile Include="P10\Parsers\D_Parser.cs" />
+    <Compile Include="P10\Parsers\EB_Parser.cs" />
+    <Compile Include="P10\Parsers\G_Parser.cs" />
+    <Compile Include="P10\Parsers\J_Parser.cs" />
+    <Compile Include="P10\Parsers\K_Parser.cs" />
+    <Compile Include="P10\Parsers\L_Parser.cs" />
+    <Compile Include="P10\Parsers\M_Parser.cs" />
+    <Compile Include="P10\Parsers\N_Parser.cs" />
+    <Compile Include="P10\Parsers\O_Parser.cs" />
+    <Compile Include="P10\Parsers\Parser.cs" />
+    <Compile Include="P10\Parsers\P_Parser.cs" />
+    <Compile Include="P10\Parsers\Q_Parser.cs" />
+    <Compile Include="P10\Parsers\SERVER_Parser.cs" />
+    <Compile Include="P10\Parsers\SQ_Parser.cs" />
+    <Compile Include="P10\Parsers\S_Parser.cs" />
+    <Compile Include="P10\Parsers\Y_Parser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IRCService.NET\IRCService.NET.csproj">
+      <Project>{5C8244DF-12A2-43BD-AB91-D9F955478140}</Project>
+      <Name>IRCService.NET</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
