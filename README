@@ -1,0 +1,8 @@
+This library allows users to easily construct irc services 
+using the Microsoft .NET framework.
+
+Currently only the Undernet P10 protocol is supported.
+
+The project contains two examples, one in C# and the other in VB.NET.
+
+The code is licensed under the GPL V3.
