@@ -245,7 +245,7 @@ namespace IRCServiceNET
                     {
                         OnReceiveRawData(toProcess);
                     }
-                    Parser.Process(item);
+                    Parser.Process(toProcess);
                 }
             }
         }
