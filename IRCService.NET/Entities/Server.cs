@@ -241,21 +241,16 @@ namespace IRCServiceNET.Entities
             if ( ! users.Remove(user.Numeric))
             {
                 return false;
-            }
-            List<Channel> toRemove = new List<Channel>();
-            foreach (KeyValuePair<string,Channel> pair in channels)
+            }            
+            var userChannels = channels.Values.ToArray();
+            foreach (var item in userChannels)
             {
-                pair.Value.RemoveUser(user, true);
-                if (pair.Value.UserCount < 1)
+                item.RemoveUser(user, true);
+                if (item.UserCount < 1)
                 {
-                    toRemove.Add(pair.Value);
+                    RemoveChannel(item);
                 }
-            }
-            //Remove empty channels
-            foreach (Channel channel in toRemove)
-            {
-                RemoveChannel(channel);
-            }
+            }            
             return true;
         }
         /// <summary>
