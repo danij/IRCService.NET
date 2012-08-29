@@ -501,7 +501,7 @@ namespace IRCServiceNET.Actions
             ChannelEntry entry = User.GetChannelEntry(channel);
             if (entry != null)
             {
-                if ((entry.Op) == false && (entry.HalfOp == false))
+                if ((entry.Op) == false && (entry.HalfOp == false) && ! useOpMode)
                 {
                     return false;
                 }
