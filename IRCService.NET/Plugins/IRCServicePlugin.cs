@@ -195,7 +195,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="ident"></param>
         /// <param name="host"></param>
         /// <param name="name"></param>
-        /// <param name="base64IP"></param>
+        /// <param name="IP"></param>
         /// <returns>The new user if it is successfully created and added 
         /// or null if not</returns>
         public User CreateUser(Server server, string nick, string ident, 
@@ -236,7 +236,7 @@ namespace IRCServiceNET.Plugins
         /// <summary>
         /// Occurs when a new server joins the network
         /// </summary>
-        /// <param name="newServer"></param>
+        /// <param name="server"></param>
         public virtual void OnNewServer(Server server) { }
         /// <summary>
         /// Occurs when a server disconnects
@@ -596,7 +596,7 @@ namespace IRCServiceNET.Plugins
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
-        /// <param name="Message"></param>
+        /// <param name="message"></param>
         public virtual void OnGlobalMessage(Server from, string to, string message)
         {
 

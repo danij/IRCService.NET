@@ -224,7 +224,7 @@ namespace IRCServiceNET
         /// Processes received data
         /// </summary>
         /// <param name="data">The data to be processesed</param>
-        /// <param name="doNotRaiseEvent">Suppress the ReceiveRawDataEvent?</param>
+        /// <param name="suppressEvent">Suppress the ReceiveRawDataEvent?</param>
         private void OnReceive(string data, bool suppressEvent = false)
         {
             string[] lines = data.Split('\n');

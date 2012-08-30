@@ -53,6 +53,7 @@ namespace IRCServiceNET.Helpers
         /// Fast logarithm calculator for integers
         /// </summary>
         /// <param name="value"></param>
+        /// <param name="baseValue"></param>
         /// <returns></returns>
         public static int Log(int value, int baseValue = 2)
         {

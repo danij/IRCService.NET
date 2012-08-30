@@ -318,6 +318,7 @@ namespace IRCServiceNET.Entities
         /// Creates a new channel on the server
         /// </summary>
         /// <param name="name"></param>
+        /// <param name="creationTimeStamp"></param>
         /// <returns></returns>
         public Channel CreateChannel(string name, 
             UnixTimestamp creationTimeStamp = null)

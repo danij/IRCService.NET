@@ -84,7 +84,7 @@ namespace IRCServiceNET.Entities
         /// <param name="host"></param>
         /// <param name="name"></param>
         /// <param name="connectionTimestamp"></param>
-        /// <param name="base64IP"></param>
+        /// <param name="IPAddress"></param>
         public User(Server server, string numeric, string nick, string ident, 
             string host, string name, UnixTimestamp connectionTimestamp, 
             IPAddress IPAddress)

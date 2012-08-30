@@ -63,7 +63,6 @@ namespace IRCServiceNET.Actions
         /// <summary>
         /// Sends a notice from the server
         /// </summary>
-        /// <param name="server"></param>
         /// <param name="user"></param>
         /// <param name="message"></param>
         /// <returns>TRUE if the notice is successfully sent</returns>
