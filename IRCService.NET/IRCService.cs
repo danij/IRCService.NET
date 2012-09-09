@@ -812,17 +812,10 @@ namespace IRCServiceNET
             }
             Server server = servers[serverNumeric];
 
-            List<string> toRemove = new List<string>();
-            for (int i = 0; i < servers.Count; i++)
-            {
-                foreach (KeyValuePair<string, Server> pair in servers)
-                {
-                    if (pair.Value.UpLink == server)
-                    {
-                        toRemove.Add(pair.Key);
-                    }
-                }
-            }
+            var toRemove = (from p in servers
+                            where p.Value.UpLink == server
+                            select p.Key).ToArray();
+
             SendActionToPlugins(p => p.OnServerDisconnect(server, reason));
             if ( ! servers.Remove(serverNumeric))
             {
@@ -830,7 +823,7 @@ namespace IRCServiceNET
             }
             foreach (string removeNumeric in toRemove)
             {
-                if ( ! RemoveServer(removeNumeric,reason))
+                if ( ! RemoveServer(removeNumeric, reason))
                 {
                     return false;
                 }

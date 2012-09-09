@@ -158,19 +158,14 @@ namespace IRCServiceNET.Plugins
             {
                 return false;
             }
-            List<Server> toRemove = new List<Server>();
-            foreach (Server item in Service.Servers)
+            foreach (Server item in Service.Servers.ToArray())
             {
                 if (item.UpLink == server)
                 {
-                    toRemove.Add(item);
-                }
-            }
-            foreach (Server item in toRemove)
-            {
-                if ( ! RemoveServer(item, ""))
-                {
-                    return false;
+                    if ( ! RemoveServer(item, ""))
+                    {
+                        return false;
+                    }
                 }
             }
             if (Service.Status == ServiceStatus.BurstCompleted)
