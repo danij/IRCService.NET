@@ -712,19 +712,22 @@ namespace IRCServiceNET
         /// <param name="process">Should the command data be processed?</param>
         public virtual void SendCommand(ICommand command, bool process = true)
         {
-            string commandString = command.ToString() + '\n';
-            if (socket == null)
+            lock (lockObject)
             {
-                return;
-            }
-            OnSendRawData(commandString);
+                string commandString = command.ToString() + '\n';
+                if (socket == null)
+                {
+                    return;
+                }
+                OnSendRawData(commandString);
 
-            byte[] data = ConnectionEncoding.GetBytes(commandString);
-            SendData(data);
+                byte[] data = ConnectionEncoding.GetBytes(commandString);
+                SendData(data);
 
-            if (process)
-            {
-                OnReceive(commandString, true);
+                if (process)
+                {
+                    OnReceive(commandString, true);
+                }
             }
         }
         /// <summary>
