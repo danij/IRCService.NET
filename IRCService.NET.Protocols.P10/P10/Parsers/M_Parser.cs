@@ -379,14 +379,14 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                         case 'o':
                         case 'v':
                         case 'h':
-                            userAffected = Service.GetUser(spaceSplit[crIndex]);
-                            crIndex++;
+                            userAffected = Service.GetUser(spaceSplit[crIndex]);                            
                             if (userAffected == null)
                             {
                                 Service.AddLog("Mode change for unknown user " + 
                                     spaceSplit[crIndex]);
                                 continue;
                             }
+                            crIndex++;
                             Channel userChannel = 
                                 userAffected.Server.GetChannel(spaceSplit[2]);
                             if (userChannel == null)
