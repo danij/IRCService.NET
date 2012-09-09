@@ -208,7 +208,6 @@ namespace IRCServiceNET
                     }
                     else
                     {
-                        OnConnectionLost();
                         Disconnect();
                     }
                 }
