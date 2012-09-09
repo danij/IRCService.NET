@@ -210,7 +210,7 @@ namespace IRCServiceNET.Plugins
                 return null;
             }
             User newUser = new User(server, FindFreeNumeric(server), nick, ident, 
-                host, name, UnixTimestamp.CurrentTimestamp(), IP);
+                host, name, UnixTimestamp.CurrentTimestamp(), IP, this);
             if (newUser == null)
             {
                 return null;

@@ -54,7 +54,7 @@ namespace IRCServiceNET.Entities
         /// <param name="base64IP"></param>
         public User(Server server, string numeric, string nick, string ident, 
             string host, string name, UnixTimestamp connectionTimestamp, 
-            string base64IP)
+            string base64IP, IRCServicePlugin plugin = null)
         {
             Numeric = numeric;
             Nick = nick;
@@ -67,6 +67,7 @@ namespace IRCServiceNET.Entities
             FakeIdent = "";
             FakeHost = "";
             Login = "";
+            Plugin = plugin;
             channels = new Dictionary<string, ChannelEntry>
                 (StringComparer.OrdinalIgnoreCase);
             if (Server.Controlled)
@@ -87,9 +88,9 @@ namespace IRCServiceNET.Entities
         /// <param name="IPAddress"></param>
         public User(Server server, string numeric, string nick, string ident, 
             string host, string name, UnixTimestamp connectionTimestamp, 
-            IPAddress IPAddress)
+            IPAddress IPAddress, IRCServicePlugin plugin = null)
             : this(server, numeric, nick, ident, host, name, 
-            connectionTimestamp, "")    
+            connectionTimestamp, "", plugin)
         {            
             if (IPAddress.AddressFamily == 
                 System.Net.Sockets.AddressFamily.InterNetworkV6)
@@ -212,13 +213,7 @@ namespace IRCServiceNET.Entities
         /// <summary>
         /// Gets the plugin that controls the user
         /// </summary>
-        public IRCServicePlugin Plugin
-        {
-            get
-            {
-                return Server.Controlled ? Server.Plugin : null;
-            }
-        }
+        public IRCServicePlugin Plugin { get; protected set; }
         /// <summary>
         /// Gets a UserAction instance or null if the user is not owned by
         /// a plugin
