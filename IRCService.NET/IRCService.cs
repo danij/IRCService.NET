@@ -134,7 +134,6 @@ namespace IRCServiceNET
                     Disconnect();
                     return;
                 }
-
                 socket.BeginReceive(
                     receiveBuffer,
                     0,
@@ -352,6 +351,8 @@ namespace IRCServiceNET
         {
             Status = ServiceStatus.Connected;
             connectionTimestamp = UnixTimestamp.CurrentTimestamp();
+
+            OnConnectionEstablished();
 
             if (MainServer == null)
             {
