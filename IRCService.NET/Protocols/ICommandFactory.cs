@@ -47,5 +47,6 @@ namespace IRCServiceNET.Protocols
         ServerQuitCommand CreateServerQuitCommand();
         UserDisconnectCommand CreateUserDisconnectCommand();
         UserQuitCommand CreateUserQuitCommand();
+        WallopsCommand CreateWallopsCommand();
     }
 }

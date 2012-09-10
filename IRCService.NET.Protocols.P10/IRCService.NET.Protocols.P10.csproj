@@ -66,6 +66,7 @@
     <Compile Include="P10\P10ServerQuitCommand.cs" />
     <Compile Include="P10\P10UserDisconnectCommand.cs" />
     <Compile Include="P10\P10UserQuitCommand.cs" />
+    <Compile Include="P10\P10WallopsCommand.cs" />
     <Compile Include="P10\Parsers\AC_Parser.cs" />
     <Compile Include="P10\Parsers\B_Parser.cs" />
     <Compile Include="P10\Parsers\CM_Parser.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="P10\Parsers\SERVER_Parser.cs" />
     <Compile Include="P10\Parsers\SQ_Parser.cs" />
     <Compile Include="P10\Parsers\S_Parser.cs" />
+    <Compile Include="P10\Parsers\WA_Parser.cs" />
     <Compile Include="P10\Parsers\Y_Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
