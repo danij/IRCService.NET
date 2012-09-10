@@ -504,12 +504,10 @@ namespace IRCServiceNET
         {
             get
             {
-                int total = 0;
-                foreach (KeyValuePair<string, Server> pair in servers)
+                lock (lockObject)
                 {
-                    total += pair.Value.UserCount;
+                    return servers.Select(p => p.Value.UserCount).Sum();
                 }
-                return total;
             }
         }
         /// <summary>
@@ -523,7 +521,10 @@ namespace IRCServiceNET
         {
             get
             {
-                return servers.Values;
+                lock (lockObject)
+                {
+                    return servers.Values.ToArray();
+                }
             }
         }
         /// <summary>
@@ -533,12 +534,15 @@ namespace IRCServiceNET
         {
             get
             {
-                List<User> allUsers = new List<User>();
-                foreach (KeyValuePair<string, Server> pair in servers)
+                lock (lockObject)
                 {
-                    allUsers.AddRange(pair.Value.Users);
+                    List<User> allUsers = new List<User>();
+                    foreach (KeyValuePair<string, Server> pair in servers)
+                    {
+                        allUsers.AddRange(pair.Value.Users);
+                    }
+                    return allUsers;
                 }
-                return allUsers.ToArray();
             }
         }
         /// <summary>
@@ -549,7 +553,10 @@ namespace IRCServiceNET
         {
             get
             {
-                return plugins.ToArray();
+                lock (lockObject)
+                {
+                    return plugins.ToArray();
+                }                
             }
         }
         /// <summary>
@@ -736,12 +743,15 @@ namespace IRCServiceNET
         /// <returns>TRUE if the server is successfully added</returns>
         public bool AddServer(Server server)
         {
-            if (servers.Keys.Contains(server.Numeric))
+            lock (lockObject)
             {
-                return false;
+                if (servers.Keys.Contains(server.Numeric))
+                {
+                    return false;
+                }
+                servers.Add(server.Numeric, server);
+                return true;
             }
-            servers.Add(server.Numeric, server);
-            return true;
         }
         /// <summary>
         /// Searches for a server by numeric
@@ -750,13 +760,16 @@ namespace IRCServiceNET
         /// <returns>The server if found or null if not</returns>
         public Server GetServer(string numeric)
         {
-            if (servers.Keys.Contains(numeric))
+            lock (lockObject)
             {
-                return servers[numeric];
-            }
-            else
-            {
-                return null;
+                if (servers.Keys.Contains(numeric))
+                {
+                    return servers[numeric];
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
         /// <summary>
@@ -766,14 +779,17 @@ namespace IRCServiceNET
         /// <returns>The server if found or null if not</returns>
         public Server GetServerByName(string name)
         {
-            foreach (KeyValuePair<string, Server> pair in servers)
+            lock (lockObject)
             {
-                if (pair.Value.Name.ToLower() == name.ToLower())
+                foreach (KeyValuePair<string, Server> pair in servers)
                 {
-                    return pair.Value;
+                    if (pair.Value.Name.ToLower() == name.ToLower())
+                    {
+                        return pair.Value;
+                    }
                 }
+                return null;
             }
-            return null;
         }
         /// <summary>
         /// Searches for a server by a users numeric
@@ -782,11 +798,14 @@ namespace IRCServiceNET
         /// <returns>The server if found or null if not</returns>
         public Server GetServerByUser(string userNumeric)
         {
-            if (userNumeric.Length < 2)
+            lock (lockObject)
             {
-                return null;
+                if (userNumeric.Length < 2)
+                {
+                    return null;
+                }
+                return GetServer(userNumeric.Substring(0, 2));
             }
-            return GetServer(userNumeric.Substring(0, 2));
         }
         /// <summary>
         /// Removes a server from the server list and notifies all plugins
@@ -796,7 +815,10 @@ namespace IRCServiceNET
         /// <returns>TRUE if the server is successfully removed</returns>
         public bool RemoveServer(Server server, string reason)
         {
-            return RemoveServer(server.Numeric, reason);
+            lock (this)
+            {
+                return RemoveServer(server.Numeric, reason);
+            }
         }
         /// <summary>
         /// Removes a server from the server list and notifies all plugins
@@ -806,29 +828,32 @@ namespace IRCServiceNET
         /// <returns>TRUE if the server is successfully removed</returns>
         public bool RemoveServer(string serverNumeric, string reason)
         {
-            if ( ! servers.Keys.Contains(serverNumeric))
+            lock (lockObject)
             {
-                return false;
-            }
-            Server server = servers[serverNumeric];
-
-            var toRemove = (from p in servers
-                            where p.Value.UpLink == server
-                            select p.Key).ToArray();
-
-            SendActionToPlugins(p => p.OnServerDisconnect(server, reason));
-            if ( ! servers.Remove(serverNumeric))
-            {
-                return false;
-            }
-            foreach (string removeNumeric in toRemove)
-            {
-                if ( ! RemoveServer(removeNumeric, reason))
+                if ( ! servers.Keys.Contains(serverNumeric))
                 {
                     return false;
                 }
+                Server server = servers[serverNumeric];
+
+                var toRemove = (from p in servers
+                                where p.Value.UpLink == server
+                                select p.Key).ToArray();
+
+                SendActionToPlugins(p => p.OnServerDisconnect(server, reason));
+                if ( ! servers.Remove(serverNumeric))
+                {
+                    return false;
+                }
+                foreach (string removeNumeric in toRemove)
+                {
+                    if ( ! RemoveServer(removeNumeric, reason))
+                    {
+                        return false;
+                    }
+                }
+                return true;
             }
-            return true;
         }
         /// <summary>
         /// Does any user on the network have the specified nick?
@@ -837,14 +862,17 @@ namespace IRCServiceNET
         /// <returns>TRUE if a user is found</returns>
         public bool NickExists(string nick)
         {
-            foreach (KeyValuePair<string, Server> pair in servers)
-            {                
-                if (pair.Value.NickExists(nick))
+            lock (lockObject)
+            {
+                foreach (KeyValuePair<string, Server> pair in servers)
                 {
-                    return true;
+                    if (pair.Value.NickExists(nick))
+                    {
+                        return true;
+                    }
                 }
+                return false;
             }
-            return false;
         }
         /// <summary>
         /// Searches for a user by numeric
@@ -853,16 +881,19 @@ namespace IRCServiceNET
         /// <returns>The user if found or null if not</returns>
         public User GetUser(string numeric)
         {
-            if (numeric.Length != 5)
+            lock (lockObject)
             {
-                return null;
+                if (numeric.Length != 5)
+                {
+                    return null;
+                }
+                Server uServer = GetServer(numeric.Substring(0, 2));
+                if (uServer == null)
+                {
+                    return null;
+                }
+                return uServer.GetUser(numeric);
             }
-            Server uServer = GetServer(numeric.Substring(0, 2));
-            if (uServer == null)
-            {
-                return null;
-            }
-            return uServer.GetUser(numeric);
         }
         /// <summary>
         /// Searches for a user by nick
@@ -871,16 +902,19 @@ namespace IRCServiceNET
         /// <returns>The user if found or null if not</returns>
         public User GetUserByNick(string nick)
         {
-            User user;
-            foreach (KeyValuePair<string, Server> pair in servers)
+            lock (lockObject)
             {
-                user = pair.Value.GetUserByNick(nick);
-                if (user != null)
+                User user;
+                foreach (KeyValuePair<string, Server> pair in servers)
                 {
-                    return user;
+                    user = pair.Value.GetUserByNick(nick);
+                    if (user != null)
+                    {
+                        return user;
+                    }
                 }
+                return null;
             }
-            return null;
         }
         /// <summary>
         /// Is the server on the network?
@@ -889,7 +923,10 @@ namespace IRCServiceNET
         /// <returns>TRUE if the server is found</returns>
         public bool ContainsServer(Server server)
         {
-            return ContainsServer(server.Numeric);
+            lock (lockObject)
+            {
+                return ContainsServer(server.Numeric);
+            }
         }
         /// <summary>
         /// Is the server on the network?
@@ -898,7 +935,10 @@ namespace IRCServiceNET
         /// <returns>TRUE if the server is found</returns>
         public bool ContainsServer(string numeric)
         {
-            return servers.Keys.Contains(numeric);
+            lock (lockObject)
+            {
+                return servers.Keys.Contains(numeric);
+            }
         }
         /// <summary>
         /// Returns all the users from a channel
@@ -907,17 +947,20 @@ namespace IRCServiceNET
         /// <returns></returns>
         public IEnumerable<ChannelEntry> GetChannelUsers(string channel)
         {
-            List<ChannelEntry> entries = new List<ChannelEntry>();
-            Channel currentChannel = null;
-            foreach (KeyValuePair<string, Server> pair in servers)
+            lock (lockObject)
             {
-                currentChannel = pair.Value.GetChannel(channel);
-                if (currentChannel != null)
+                List<ChannelEntry> entries = new List<ChannelEntry>();
+                Channel currentChannel = null;
+                foreach (KeyValuePair<string, Server> pair in servers)
                 {
-                    entries.AddRange(currentChannel.Entries);
+                    currentChannel = pair.Value.GetChannel(channel);
+                    if (currentChannel != null)
+                    {
+                        entries.AddRange(currentChannel.Entries);
+                    }
                 }
+                return entries;
             }
-            return entries.ToArray();
         }
         /// <summary>
         /// Returns a channel from a server that has users on it
@@ -926,16 +969,19 @@ namespace IRCServiceNET
         /// <returns>The channel or null if it is not found</returns>
         public Channel GetChannel(string channelName)
         {
-            Channel result = null;
-            foreach (KeyValuePair<string, Server> pair in servers)
+            lock (lockObject)
             {
-                result = pair.Value.GetChannel(channelName);
-                if (result != null)
+                Channel result = null;
+                foreach (KeyValuePair<string, Server> pair in servers)
                 {
-                    break;
+                    result = pair.Value.GetChannel(channelName);
+                    if (result != null)
+                    {
+                        break;
+                    }
                 }
+                return result;
             }
-            return result;
         }
         /// <summary>
         /// Logs a new event
@@ -975,21 +1021,24 @@ namespace IRCServiceNET
         /// </summary>
         public virtual void PrepareForPlugins()
         {
-            if (MainServer == null)
+            lock (lockObject)
             {
-                MainServer = new Server(
-                    this, 
-                    numeric, 
-                    name,
-                    description,
-                    startTimestamp, 
-                    Server.MaxCapacity,
-                    true,
-                    null
-                );
-                AddServer(MainServer);
+                if (MainServer == null)
+                {
+                    MainServer = new Server(
+                        this,
+                        numeric,
+                        name,
+                        description,
+                        startTimestamp,
+                        Server.MaxCapacity,
+                        true,
+                        null
+                    );
+                    AddServer(MainServer);
+                }
+                PreparedForPlugins = true;
             }
-            PreparedForPlugins = true;
         }
         /// <summary>
         /// Registers a plugin
@@ -997,41 +1046,47 @@ namespace IRCServiceNET
         /// <param name="plugin"></param>
         public virtual void RegisterPlugin(IRCServicePlugin plugin)
         {
-            if (MainServer == null)
+            lock (lockObject)
             {
-                throw new NotPreparedForPluginsException();
+                if (MainServer == null)
+                {
+                    throw new NotPreparedForPluginsException();
+                }
+                if (Status != ServiceStatus.Disconnected)
+                {
+                    throw new CannotRegisterPluginException();
+                }
+                plugins.Add(plugin);
             }
-            if (Status != ServiceStatus.Disconnected)
-            {
-                throw new CannotRegisterPluginException();
-            }
-            plugins.Add(plugin);
         }
         /// <summary>
         /// Registers all the plugin servers and their clients on the network
         /// </summary>
         public virtual void AddPluginServersAndClientsToNetwork()
         {
-            IEnumerable<User> users;
-            foreach (IRCServicePlugin plugin in plugins)
+            lock (lockObject)
             {
-                foreach (Server server in plugin.Servers)
+                IEnumerable<User> users;
+                foreach (IRCServicePlugin plugin in plugins)
                 {
-                    var command = CommandFactory.CreateNewServerCommand();
-                    command.Server = server;
-                    SendCommand(command, false);
-                    
-                    users = server.Users;
-                    foreach (User user in users)
+                    foreach (Server server in plugin.Servers)
                     {
-                        AddPluginUser(user);
+                        var command = CommandFactory.CreateNewServerCommand();
+                        command.Server = server;
+                        SendCommand(command, false);
+
+                        users = server.Users;
+                        foreach (User user in users)
+                        {
+                            AddPluginUser(user);
+                        }
                     }
                 }
-            }
-            users = MainServer.Users;
-            foreach (User user in users)
-            {
-                AddPluginUser(user);
+                users = MainServer.Users;
+                foreach (User user in users)
+                {
+                    AddPluginUser(user);
+                }
             }
         }
         /// <summary>
@@ -1088,58 +1143,64 @@ namespace IRCServiceNET
         public virtual void AddtoBurst(User user, string channel, 
             bool op, bool voice, bool halfop)
         {
-            if (Status == ServiceStatus.BurstCompleted)
+            lock (lockObject)
             {
-                throw new BurstCompletedException();
+                if (Status == ServiceStatus.BurstCompleted)
+                {
+                    throw new BurstCompletedException();
+                }
+                if (user == null)
+                {
+                    return;
+                }
+                Channel channelToBurst;
+                if ( ! toBurst.ContainsKey(channel))
+                {
+                    channelToBurst = new Channel(null, channel, null);
+                    toBurst.Add(channel, channelToBurst);
+                }
+                else
+                {
+                    channelToBurst = toBurst[channel];
+                }
+                if (channelToBurst.GetEntry(user) != null)
+                {
+                    return;
+                }
+                channelToBurst.AddUser(user, op, voice, halfop);
             }
-            if (user == null)
-            {
-                return;
-            }
-            Channel channelToBurst;
-            if ( ! toBurst.ContainsKey(channel))
-            {
-                channelToBurst = new Channel(null, channel, null);
-                toBurst.Add(channel, channelToBurst);
-            }
-            else
-            {
-                channelToBurst = toBurst[channel];
-            }
-            if (channelToBurst.GetEntry(user) != null)
-            {
-                return;
-            }
-            channelToBurst.AddUser(user, op, voice, halfop);
         }
         /// <summary>
         /// Sends the service burst
         /// </summary>
         public virtual void SendBurst()
-        {    
-            UnixTimestamp burstTimestamp = null;
-
-            foreach (KeyValuePair<string, Channel> pair in toBurst)
+        {
+            lock (this)
             {
-                Channel existingChannel = GetChannel(pair.Key);
-                if (existingChannel != null)
+                UnixTimestamp burstTimestamp = null;
+
+                foreach (KeyValuePair<string, Channel> pair in toBurst)
                 {
-                    burstTimestamp = existingChannel.CreationTimeStamp;
-                }
-                else
-                {
-                    burstTimestamp = UnixTimestamp.CurrentTimestamp();                    
+                    Channel existingChannel = GetChannel(pair.Key);
+                    if (existingChannel != null)
+                    {
+                        burstTimestamp = existingChannel.CreationTimeStamp;
+                    }
+                    else
+                    {
+                        burstTimestamp = UnixTimestamp.CurrentTimestamp();
+                    }
+
+                    var command = CommandFactory.CreateChannelBurstCommand();
+                    command.Server = MainServer;
+                    command.Channel = pair.Value;
+                    command.BurstTimestamp = burstTimestamp;
+
+                    SendCommand(command);
                 }
 
-                var command = CommandFactory.CreateChannelBurstCommand();
-                command.Server = MainServer;
-                command.Channel = pair.Value;
-                command.BurstTimestamp = burstTimestamp;
-
-                SendCommand(command);
+                toBurst = null;
             }
-
-            toBurst = null;
         }
 #endregion
 
