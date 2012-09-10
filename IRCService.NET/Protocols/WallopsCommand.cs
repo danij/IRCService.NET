@@ -27,7 +27,12 @@ namespace IRCServiceNET.Protocols
     /// </summary>
     public abstract class WallopsCommand : ICommand
     {
+<<<<<<< HEAD
         public IHasNumeric From { get; set; }
+=======
+        public Server Server { get; set; }
+        public User User { get; set; }
+>>>>>>> 6a26b828bf7e8bd54c600ffc133efd1d91ab1958
         public string Message { get; set; }
     }
 }

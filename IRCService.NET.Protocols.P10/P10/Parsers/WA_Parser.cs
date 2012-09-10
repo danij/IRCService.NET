@@ -45,7 +45,11 @@ namespace IRCServiceNET.Protocols.P10.Parsers
 
             if (spaceSplit[0].Length == 5)
             {
+<<<<<<< HEAD
                 var user = Service.GetUser(spaceSplit[0]);
+=======
+                User user = Service.GetUser(spaceSplit[0]);
+>>>>>>> 6a26b828bf7e8bd54c600ffc133efd1d91ab1958
                 if (user != null)
                 {
                     Service.SendActionToPlugins(p => p.OnWallops(user, message));

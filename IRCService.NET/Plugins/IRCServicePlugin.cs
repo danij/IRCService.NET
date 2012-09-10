@@ -601,7 +601,11 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
+<<<<<<< HEAD
         public virtual void OnGlobalMessage(IUser from, string to, string message)
+=======
+        public virtual void OnGlobalMessage(User from, string to, string message)
+>>>>>>> 6a26b828bf7e8bd54c600ffc133efd1d91ab1958
         {
 
         }
@@ -683,14 +687,22 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
+<<<<<<< HEAD
         public virtual void OnNotice(IUser from, IUser to, string message) { }
+=======
+        public virtual void OnNotice(User from, User to, string message) { }
+>>>>>>> 6a26b828bf7e8bd54c600ffc133efd1d91ab1958
         /// <summary>
         /// Occurs when a user owned by the plugin receives a notice from a server
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
+<<<<<<< HEAD
         public virtual void OnNotice(IServer from, IUser to, string message) { }
+=======
+        public virtual void OnNotice(Server from, User to, string message) { }
+>>>>>>> 6a26b828bf7e8bd54c600ffc133efd1d91ab1958
         /// <summary>
         /// Occurs when a user owned by the plugin receives a CTCP reply 
         /// from a user
@@ -717,7 +729,11 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
+<<<<<<< HEAD
         public virtual void OnChannelMessage(IUser from, string to, 
+=======
+        public virtual void OnChannelMessage(User from, string to, 
+>>>>>>> 6a26b828bf7e8bd54c600ffc133efd1d91ab1958
             string message) { }
         /// <summary>
         /// Occurs when a server sends a channel message
@@ -725,7 +741,11 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
+<<<<<<< HEAD
         public virtual void OnChannelMessage(IServer from, string to, 
+=======
+        public virtual void OnChannelMessage(Server from, string to, 
+>>>>>>> 6a26b828bf7e8bd54c600ffc133efd1d91ab1958
             string message) { }
         /// <summary>
         /// Occurs when a user sends a channel CTCP request
@@ -751,7 +771,11 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
+<<<<<<< HEAD
         public virtual void OnChannelNotice(IUser from, string to, string message) 
+=======
+        public virtual void OnChannelNotice(User from, string to, string message) 
+>>>>>>> 6a26b828bf7e8bd54c600ffc133efd1d91ab1958
         {
 
         }
@@ -761,7 +785,11 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
+<<<<<<< HEAD
         public virtual void OnChannelNotice(IServer from, string to, string message)
+=======
+        public virtual void OnChannelNotice(Server from, string to, string message)
+>>>>>>> 6a26b828bf7e8bd54c600ffc133efd1d91ab1958
         {
 
         }
@@ -771,13 +799,21 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
+<<<<<<< HEAD
         public virtual void OnWallops(IServer from, string message) { }
+=======
+        public virtual void OnWallops(Server from, string message) { }
+>>>>>>> 6a26b828bf7e8bd54c600ffc133efd1d91ab1958
         /// <summary>
         /// Occurs when a user sends a wallops
         /// </summary>
         /// <param name="from"></param>
         /// <param name="message"></param>
+<<<<<<< HEAD
         public virtual void OnWallops(IUser from, string message) { }
+=======
+        public virtual void OnWallops(User from, string message) { }
+>>>>>>> 6a26b828bf7e8bd54c600ffc133efd1d91ab1958
     #endregion
 
 #endregion

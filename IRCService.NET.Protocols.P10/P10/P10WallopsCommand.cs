@@ -25,7 +25,11 @@ namespace IRCServiceNET.Protocols.P10
     {
         public override string ToString()
         {
+<<<<<<< HEAD
             return From.Numeric + " WA :" + 
+=======
+            return (Server != null ? Server.Numeric : User.Numeric) + " WA :" + 
+>>>>>>> 6a26b828bf7e8bd54c600ffc133efd1d91ab1958
                 (Message == null ? String.Empty : Message);
         }
     }
