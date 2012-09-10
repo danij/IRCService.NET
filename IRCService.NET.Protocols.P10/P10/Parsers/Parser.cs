@@ -73,7 +73,11 @@ namespace IRCServiceNET.Protocols.P10.Parsers
             {
                 parsers[spaceSplit[0]].Parse(spaceSplit, colonSplit, data);
             }
-            if (spaceSplit.Count() > 1)
+            else if (spaceSplit[0] == "ERROR")
+            {
+                parsers[spaceSplit[0]].Parse(spaceSplit, colonSplit, data);
+            }
+            else if (spaceSplit.Count() > 1)
             {
                 if (parsers.ContainsKey(spaceSplit[1]))
                 {

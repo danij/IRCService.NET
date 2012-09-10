@@ -75,6 +75,10 @@ namespace IRCServiceNET.Protocols.P10
         {
             return new P10EndOfBurstCommand();
         }
+        public ErrorCommand CreateErrorCommand()
+        {
+            return new P10ErrorCommand();
+        }
         public AcknowledgeBurstCommand CreateAcknowledgeBurstCommand()
         {
             return new P10AcknowledgeBurstCommand();

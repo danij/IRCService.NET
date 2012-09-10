@@ -661,7 +661,17 @@ namespace IRCServiceNET
                 ServiceReset(this, EventArgs.Empty);
             }
         }
-        
+        /// <summary>
+        /// Occurs when an error is received from the uplink server
+        /// </summary>
+        public event EventHandler<LogEventArgs> UplinkError;
+        public void OnUplinkError(string message)
+        {
+            if (UplinkError != null)
+            {
+                UplinkError(this, new LogEventArgs() { Data = message });
+            }
+        }
 #endregion
         
 #region Public Methods
