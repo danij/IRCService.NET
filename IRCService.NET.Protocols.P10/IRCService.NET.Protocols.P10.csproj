@@ -62,6 +62,7 @@
     <Compile Include="P10\P10SendMessageCommand.cs" />
     <Compile Include="P10\P10ServerAuthenticationCommand.cs" />
     <Compile Include="P10\P10ServerIntroductionCommand.cs" />
+    <Compile Include="P10\P10ServerNoticeCommand.cs" />
     <Compile Include="P10\P10ServerQuitCommand.cs" />
     <Compile Include="P10\P10UserDisconnectCommand.cs" />
     <Compile Include="P10\P10UserQuitCommand.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="P10\Parsers\CM_Parser.cs" />
     <Compile Include="P10\Parsers\CommandParser.cs" />
     <Compile Include="P10\Parsers\C_Parser.cs" />
+    <Compile Include="P10\Parsers\DS_Parser.cs" />
     <Compile Include="P10\Parsers\D_Parser.cs" />
     <Compile Include="P10\Parsers\EB_Parser.cs" />
     <Compile Include="P10\Parsers\ERROR_Parser.cs" />

@@ -95,6 +95,10 @@ namespace IRCServiceNET.Protocols.P10
         {
             return new P10ServerIntroductionCommand();
         }
+        public ServerNoticeCommand CreateServerNoticeCommand()
+        {
+            return new P10ServerNoticeCommand();
+        }
         public AuthenticateUserCommand CreateAuthenticateUserCommand()
         {
             return new P10AuthenticateUserCommand();

@@ -256,6 +256,12 @@ namespace IRCServiceNET.Plugins
             servers.Remove(server);
         }
         /// <summary>
+        /// Occurs when a server sends a global notice
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="message"></param>
+        public virtual void OnServerNotice(Server server, string message) { }
+        /// <summary>
         /// Occurs when a new user connects
         /// </summary>
         /// <param name="newUser"></param>

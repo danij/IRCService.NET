@@ -82,6 +82,7 @@
     <Compile Include="Protocols\PingReplyCommand.cs" />
     <Compile Include="Protocols\SendMessageCommand.cs" />
     <Compile Include="Protocols\ServerIntroductionCommand.cs" />
+    <Compile Include="Protocols\ServerNoticeCommand.cs" />
     <Compile Include="Protocols\ServerQuitCommand.cs" />
     <Compile Include="Protocols\UserDisconnectCommand.cs" />
     <Compile Include="Protocols\UserQuitCommand.cs" />

@@ -43,6 +43,7 @@ namespace IRCServiceNET.Protocols
         SendMessageCommand CreateSendMessageCommand();
         ServerAuthenticationCommand CreateServerAuthenticationCommand();
         ServerIntroductionCommand CreateServerIntroductionCommand();
+        ServerNoticeCommand CreateServerNoticeCommand();
         ServerQuitCommand CreateServerQuitCommand();
         UserDisconnectCommand CreateUserDisconnectCommand();
         UserQuitCommand CreateUserQuitCommand();
