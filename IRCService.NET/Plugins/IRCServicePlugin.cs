@@ -32,6 +32,7 @@ namespace IRCServiceNET.Plugins
     {
         private List<Server> servers;
         private Server mainServer;
+        private object lockObject = new object();
 
         /// <summary>
         /// Searches for a free numeric on a specified server
@@ -40,21 +41,24 @@ namespace IRCServiceNET.Plugins
         /// <returns></returns>
         private string FindFreeNumeric(Server server)
         {
-            if (server.MaxNumeric < 260000)
+            lock (lockObject)
             {
-                return server.Numeric + 
-                    Base64Converter.IntToNumeric(server.MaxNumeric + 1, 3);
-            }
-            string numeric = "";
-            for (uint i = 0; i < Server.MaxCapacity; i++)
-            {
-                numeric = server.Numeric + Base64Converter.IntToNumeric(i, 3);
-                if (server.GetUser(numeric) == null)
+                if (server.MaxNumeric < 260000)
                 {
-                    break;
+                    return server.Numeric +
+                        Base64Converter.IntToNumeric(server.MaxNumeric + 1, 3);
                 }
+                string numeric = "";
+                for (uint i = 0; i < Server.MaxCapacity; i++)
+                {
+                    numeric = server.Numeric + Base64Converter.IntToNumeric(i, 3);
+                    if (server.GetUser(numeric) == null)
+                    {
+                        break;
+                    }
+                }
+                return numeric;
             }
-            return numeric;
         }
 
         /// <summary>
@@ -120,27 +124,30 @@ namespace IRCServiceNET.Plugins
         public Server AddServer(string numeric, string name, string description, 
             int maxUsers, Server upLink = null)
         {
-            if (Service.GetServer(numeric) != null)
+            lock (lockObject)
             {
-                return null;
+                if (Service.GetServer(numeric) != null)
+                {
+                    return null;
+                }
+                Server newServer = new Server(Service, numeric, name, description,
+                    UnixTimestamp.CurrentTimestamp(), maxUsers, true, upLink);
+                newServer.Plugin = this;
+                servers.Add(newServer);
+
+                Service.AddServer(newServer);
+                servers.Sort((x, y) => x.Depth - y.Depth);
+
+                if (Service.Status == ServiceStatus.BurstCompleted)
+                {
+                    var command = Service.CommandFactory.CreateNewServerCommand();
+                    command.Server = newServer;
+                    Service.SendCommand(command, false);
+                    Service.SendActionToPlugins(p => p.OnNewServer(newServer), this);
+                }
+
+                return newServer;
             }
-            Server newServer = new Server(Service, numeric, name, description,
-                UnixTimestamp.CurrentTimestamp(), maxUsers, true, upLink);
-            newServer.Plugin = this;
-            servers.Add(newServer);
-
-            Service.AddServer(newServer);
-            servers.Sort((x, y) => x.Depth - y.Depth);
-
-            if (Service.Status == ServiceStatus.BurstCompleted)
-            {
-                var command = Service.CommandFactory.CreateNewServerCommand();
-                command.Server = newServer;
-                Service.SendCommand(command, false);
-                Service.SendActionToPlugins(p => p.OnNewServer(newServer), this);
-            }
-
-            return newServer;
         }
         /// <summary>
         /// Removes a owned server from the network
@@ -150,37 +157,40 @@ namespace IRCServiceNET.Plugins
         /// <returns>TRUE if the server is successfully removed</returns>
         public bool RemoveServer(Server server, string reason)
         {
-            if (server == null)
+            lock (lockObject)
             {
-                return false;
-            }
-            if ( ! server.Controlled)
-            {
-                return false;
-            }
-            foreach (Server item in Service.Servers.ToArray())
-            {
-                if (item.UpLink == server)
+                if (server == null)
                 {
-                    if ( ! RemoveServer(item, ""))
+                    return false;
+                }
+                if (!server.Controlled)
+                {
+                    return false;
+                }
+                foreach (Server item in Service.Servers.ToArray())
+                {
+                    if (item.UpLink == server)
                     {
-                        return false;
+                        if (!RemoveServer(item, ""))
+                        {
+                            return false;
+                        }
                     }
                 }
+                if (Service.Status == ServiceStatus.BurstCompleted)
+                {
+                    var command = Service.CommandFactory.CreateServerQuitCommand();
+                    command.Server = server;
+                    command.Reason = reason;
+                    Service.SendCommand(command, false);
+                    Service.SendActionToPlugins(
+                        p => p.OnServerDisconnect(server, reason),
+                        this
+                    );
+                }
+                servers.Remove(server);
+                return true;
             }
-            if (Service.Status == ServiceStatus.BurstCompleted)
-            {
-                var command = Service.CommandFactory.CreateServerQuitCommand();
-                command.Server = server;
-                command.Reason = reason;
-                Service.SendCommand(command, false); 
-                Service.SendActionToPlugins(
-                    p => p.OnServerDisconnect(server, reason), 
-                    this
-                );
-            }
-            servers.Remove(server);
-            return true;
         }
         /// <summary>
         /// Creates and adds a new user to the network
@@ -196,31 +206,34 @@ namespace IRCServiceNET.Plugins
         public User CreateUser(Server server, string nick, string ident, 
             string host, string name, IPAddress IP)
         {
-            if (server == null)
+            lock (lockObject)
             {
-                return null;
-            }
-            if (Service.NickExists(nick))
-            {
-                return null;
-            }
-            User newUser = new User(server, FindFreeNumeric(server), nick, ident, 
-                host, name, UnixTimestamp.CurrentTimestamp(), IP, this);
-            if (newUser == null)
-            {
-                return null;
-            }
-            server.AddUser(newUser);
+                if (server == null)
+                {
+                    return null;
+                }
+                if (Service.NickExists(nick))
+                {
+                    return null;
+                }
+                User newUser = new User(server, FindFreeNumeric(server), nick, ident,
+                    host, name, UnixTimestamp.CurrentTimestamp(), IP, this);
+                if (newUser == null)
+                {
+                    return null;
+                }
+                server.AddUser(newUser);
 
-            if (Service.BurstCompleted)
-            {
-                var command = Service.CommandFactory.CreateNewUserCommand();
-                command.User = newUser;
-                Service.SendCommand(command, false);
-                Service.SendActionToPlugins(p => p.OnNewUser(newUser), this);
-            }
+                if (Service.BurstCompleted)
+                {
+                    var command = Service.CommandFactory.CreateNewUserCommand();
+                    command.User = newUser;
+                    Service.SendCommand(command, false);
+                    Service.SendActionToPlugins(p => p.OnNewUser(newUser), this);
+                }
 
-            return newUser;
+                return newUser;
+            }
         }
 
 #region Virtual Functions
