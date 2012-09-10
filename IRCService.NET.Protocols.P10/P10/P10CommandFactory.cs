@@ -107,5 +107,9 @@ namespace IRCServiceNET.Protocols.P10
         {
             return new P10ChannelBurstCommand();
         }
+        public WallopsCommand CreateWallopsCommand()
+        {
+            return new P10WallopsCommand();
+        }
     }
 }

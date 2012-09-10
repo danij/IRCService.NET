@@ -600,7 +600,7 @@ namespace IRCServiceNET.Plugins
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
-        /// <param name="Message"></param>
+        /// <param name="message"></param>
         public virtual void OnGlobalMessage(User from, string to, string message)
         {
 
@@ -682,14 +682,14 @@ namespace IRCServiceNET.Plugins
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
-        /// <param name="Message"></param>
+        /// <param name="message"></param>
         public virtual void OnNotice(User from, User to, string message) { }
         /// <summary>
         /// Occurs when a user owned by the plugin receives a notice from a server
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
-        /// <param name="Message"></param>
+        /// <param name="message"></param>
         public virtual void OnNotice(Server from, User to, string message) { }
         /// <summary>
         /// Occurs when a user owned by the plugin receives a CTCP reply 
@@ -716,7 +716,7 @@ namespace IRCServiceNET.Plugins
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
-        /// <param name="Message"></param>
+        /// <param name="message"></param>
         public virtual void OnChannelMessage(User from, string to, 
             string message) { }
         /// <summary>
@@ -724,7 +724,7 @@ namespace IRCServiceNET.Plugins
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
-        /// <param name="Message"></param>
+        /// <param name="message"></param>
         public virtual void OnChannelMessage(Server from, string to, 
             string message) { }
         /// <summary>
@@ -750,8 +750,8 @@ namespace IRCServiceNET.Plugins
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
-        /// <param name="Message"></param>
-        public virtual void OnChannelNotice(User from, string to, string message)
+        /// <param name="message"></param>
+        public virtual void OnChannelNotice(User from, string to, string message) 
         {
 
         }
@@ -760,12 +760,25 @@ namespace IRCServiceNET.Plugins
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
-        /// <param name="Message"></param>
+        /// <param name="message"></param>
         public virtual void OnChannelNotice(Server from, string to, string message)
         {
 
         }
-#endregion
+        /// <summary>
+        /// Occurs when a server sends a wallops
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="message"></param>
+        public virtual void OnWallops(Server from, string message) { }
+        /// <summary>
+        /// Occurs when a user sends a wallops
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="message"></param>
+        public virtual void OnWallops(User from, string message) { }
+    #endregion
 
 #endregion
     }

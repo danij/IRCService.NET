@@ -89,6 +89,7 @@
     <Compile Include="Entities\Server.cs" />
     <Compile Include="Helpers\UnixTimestamp.cs" />
     <Compile Include="Entities\User.cs" />
+    <Compile Include="Protocols\WallopsCommand.cs" />
     <Compile Include="ServiceStatus.cs" />
   </ItemGroup>
   <ItemGroup />
