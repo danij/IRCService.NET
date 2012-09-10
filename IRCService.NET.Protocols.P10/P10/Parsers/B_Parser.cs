@@ -91,7 +91,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 bool HalfOp = false;
                 bool Voice = false;
                 string channelUserNumeric;
-                User channelUser;
+                IUser channelUser;
                 string[] ChannelUsers = spaceSplit[userIndex].Split(',');
                 if (spaceSplit[userIndex][0] != ':')
                 {
@@ -133,21 +133,20 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                             return;
                         }
 
-                        Channel channel = 
-                            channelUser.Server.GetChannel(channelName);
+                        var channel = channelUser.Server.GetChannel(channelName);
                         if (channel == null)
                         {
-                            channel = channelUser.Server.CreateChannel(
+                            channel = (channelUser.Server as Server).CreateChannel(
                                 channelName, 
                                 creationTimestamp
                             );
-                            channelUser.Server.AddChannel(channel);
+                            (channelUser.Server as Server).AddChannel(channel);
                         }
                         else
                         {
-                            channel.CreationTimeStamp = creationTimestamp;
+                            (channel as Channel).CreationTimeStamp = creationTimestamp;
                         }
-                        channel.AddUser(channelUser, Op, Voice, HalfOp);
+                        (channel as Channel).AddUser(channelUser, Op, Voice, HalfOp);
                     }
                 }
             }
@@ -168,7 +167,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
 
             foreach (var item in Service.Servers)
             {
-                Channel serverChannel = item.GetChannel(channelName);
+                var serverChannel = item.GetChannel(channelName) as Channel;
                 if (serverChannel != null)
                 {
                     if (serverChannel.CreationTimeStamp.Timestamp > 

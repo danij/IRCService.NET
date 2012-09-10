@@ -27,7 +27,7 @@ namespace IRCServiceNET.Protocols
     /// </summary>
     public abstract class UserQuitCommand : ICommand
     {
-        public User User { get; set; }
+        public IUser User { get; set; }
         public string Reason { get; set; }
     }
 }

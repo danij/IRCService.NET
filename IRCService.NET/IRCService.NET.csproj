@@ -49,8 +49,11 @@
     <Compile Include="Entities\Ban.cs" />
     <Compile Include="Entities\ChannelEntry.cs" />
     <Compile Include="Entities\ChannelModes.cs" />
+    <Compile Include="Entities\IChannel.cs" />
     <Compile Include="Entities\IHasNumeric.cs" />
     <Compile Include="Actions\UserAction.cs" />
+    <Compile Include="Entities\IServer.cs" />
+    <Compile Include="Entities\IUser.cs" />
     <Compile Include="EventArgs.cs" />
     <Compile Include="Helpers\Base64Converter.cs" />
     <Compile Include="Entities\Channel.cs" />

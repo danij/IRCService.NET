@@ -27,8 +27,8 @@ namespace IRCServiceNET.Protocols
     /// </summary>
     public abstract class AuthenticateUserCommand : ICommand
     {
-        public Server From { get; set; }
-        public User To { get; set; }
+        public IServer From { get; set; }
+        public IUser To { get; set; }
         public string Username { get; set; }
     }
 }

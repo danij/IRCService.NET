@@ -27,7 +27,7 @@ namespace IRCServiceNET.Protocols
     /// </summary>
     public abstract class ChangeUserModeCommand : ICommand
     {
-        public User User { get; set; }
+        public IUser User { get; set; }
         public string Mode { get; set; }
         public bool Value { get; set; }
     }

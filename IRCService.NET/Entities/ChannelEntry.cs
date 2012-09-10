@@ -32,7 +32,7 @@ namespace IRCServiceNET.Entities
         /// </summary>
         /// <param name="channel"></param>
         /// <param name="user"></param>
-        public ChannelEntry(Channel channel, User user)
+        public ChannelEntry(IChannel channel, IUser user)
         {
             Channel = channel;
             User = user;
@@ -52,11 +52,11 @@ namespace IRCServiceNET.Entities
         /// <summary>
         /// Gets the Channel
         /// </summary>
-        public Channel Channel { get; protected set; }
+        public IChannel Channel { get; protected set; }
         /// <summary>
         /// Gets the User
         /// </summary>
-        public User User { get; protected set; }
+        public IUser User { get; protected set; }
         /// <summary>
         /// Gets or sets if the user has Op privileges on the channel
         /// </summary>

@@ -27,7 +27,7 @@ namespace IRCServiceNET.Protocols
     /// </summary>
     public abstract class PingReplyCommand : ICommand
     {
-        public Server From { get; set; }
+        public IServer From { get; set; }
         public string To { get; set; }
         public string Message { get; set; }
         public bool Complex { get; set; }

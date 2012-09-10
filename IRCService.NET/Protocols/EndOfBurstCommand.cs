@@ -27,6 +27,6 @@ namespace IRCServiceNET.Protocols
     /// </summary>
     public abstract class EndOfBurstCommand : ICommand
     {
-        public Server From { get; set; }
+        public IServer From { get; set; }
     }
 }

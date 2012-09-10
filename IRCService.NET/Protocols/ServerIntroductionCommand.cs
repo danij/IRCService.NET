@@ -28,7 +28,7 @@ namespace IRCServiceNET.Protocols
     /// </summary>
     public abstract class ServerIntroductionCommand : ICommand
     {
-        public Server Server { get; set; }
+        public IServer Server { get; set; }
         public UnixTimestamp StartTimeStamp { get; set; }
     }
 }

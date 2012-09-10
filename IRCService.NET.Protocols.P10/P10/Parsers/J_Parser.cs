@@ -44,7 +44,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 return;
             }
 
-            User user = Service.GetUser(spaceSplit[0]);
+            var user = Service.GetUser(spaceSplit[0]);
             if (user == null)
             {
                 Service.AddLog("Unknown user " + spaceSplit[0] + " joins channel " +
@@ -53,18 +53,18 @@ namespace IRCServiceNET.Protocols.P10.Parsers
             }
             string[] channels = spaceSplit[2].Split(',');
 
-            Channel currentChannel;
+            IChannel currentChannel;
 
             foreach (string item in channels)
             {
                 currentChannel = user.Server.GetChannel(item);
                 if (currentChannel == null)
                 {
-                    currentChannel = user.Server.CreateChannel(item);
-                    user.Server.AddChannel(currentChannel);
+                    currentChannel = (user.Server as Server).CreateChannel(item);
+                    (user.Server as Server).AddChannel(currentChannel);
                     Service.SendActionToPlugins(p => p.OnNewChannel(item));
                 }
-                currentChannel.AddUser(user, false, false, false);
+                (currentChannel as Channel).AddUser(user, false, false, false);
                 Service.SendActionToPlugins(
                     p => p.OnChannelJoin(item, user),
                     user.Plugin                        

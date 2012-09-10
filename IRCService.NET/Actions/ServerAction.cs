@@ -29,7 +29,7 @@ namespace IRCServiceNET.Actions
     /// </summary>
     public class ServerAction : NetworkAction
     {
-        public ServerAction(Server server)
+        public ServerAction(IServer server)
         {
             if (server == null)
             {
@@ -45,7 +45,7 @@ namespace IRCServiceNET.Actions
         /// <param name="user"></param>
         /// <param name="message"></param>
         /// <returns>TRUE if the message is successfully sent</returns>
-        public bool SendPrivateMessage(User user, string message)
+        public bool SendPrivateMessage(IUser user, string message)
         {
             if (user == null)
             {
@@ -66,7 +66,7 @@ namespace IRCServiceNET.Actions
         /// <param name="user"></param>
         /// <param name="message"></param>
         /// <returns>TRUE if the notice is successfully sent</returns>
-        public bool SendNotice(User user, string message)
+        public bool SendNotice(IUser user, string message)
         {
             if (user == null)
             {
@@ -88,7 +88,7 @@ namespace IRCServiceNET.Actions
         /// <param name="toLogIn"></param>
         /// <param name="login"></param>
         /// <returns>TRUE if the login is successfull</returns>
-        public bool LoginUser(User toLogIn, string login)
+        public bool LoginUser(IUser toLogIn, string login)
         {
             if (toLogIn == null)
             {

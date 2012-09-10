@@ -27,7 +27,7 @@ namespace IRCServiceNET.Entities
     /// <summary>
     /// An IRC User
     /// </summary>
-    public class User : IHasNumeric
+    public class User : IUser
     {
         /// <summary>
         /// The channels the user is on
@@ -52,7 +52,7 @@ namespace IRCServiceNET.Entities
         /// <param name="name"></param>
         /// <param name="connectionTimestamp"></param>
         /// <param name="base64IP"></param>
-        public User(Server server, string numeric, string nick, string ident, 
+        public User(IServer server, string numeric, string nick, string ident, 
             string host, string name, UnixTimestamp connectionTimestamp, 
             string base64IP, IRCServicePlugin plugin = null)
         {
@@ -86,7 +86,7 @@ namespace IRCServiceNET.Entities
         /// <param name="name"></param>
         /// <param name="connectionTimestamp"></param>
         /// <param name="IPAddress"></param>
-        public User(Server server, string numeric, string nick, string ident, 
+        public User(IServer server, string numeric, string nick, string ident, 
             string host, string name, UnixTimestamp connectionTimestamp, 
             IPAddress IPAddress, IRCServicePlugin plugin = null)
             : this(server, numeric, nick, ident, host, name, 
@@ -150,7 +150,7 @@ namespace IRCServiceNET.Entities
         /// <summary>
         /// Gets the server that the user is connected to
         /// </summary>
-        public Server Server { get; protected set; }
+        public IServer Server { get; protected set; }
         /// <summary>
         /// Gets the user's name
         /// </summary>
@@ -247,7 +247,7 @@ namespace IRCServiceNET.Entities
         /// <summary>
         /// For internal use only
         /// </summary>
-        public bool OnRemoveFromChannel(Channel channel)
+        public bool OnRemoveFromChannel(IChannel channel)
         {
             return channels.Remove(channel.Name);
         }

@@ -29,7 +29,7 @@ Public Class MyPlugin
     ''' A simple bot
     ''' </summary>
     ''' <remarks></remarks>
-    Private _bot As User
+    Private _bot As IUser
     ''' <summary>
     ''' Default constructor
     ''' </summary>
@@ -44,11 +44,11 @@ Public Class MyPlugin
     ''' <value></value>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Public Property Bot() As User
+    Public Property Bot() As IUser
         Get
             Return _bot
         End Get
-        Private Set(value As User)
+        Private Set(value As IUser)
             _bot = value
         End Set
     End Property
@@ -86,8 +86,8 @@ Public Class MyPlugin
     ''' <param name="to"></param>
     ''' <param name="message"></param>
     ''' <remarks></remarks>
-    Public Overrides Sub OnPrivateMessage(from As IRCServiceNET.Entities.User,
-                                          [to] As IRCServiceNET.Entities.User,
+    Public Overrides Sub OnPrivateMessage(from As IRCServiceNET.Entities.IUser,
+                                          [to] As IRCServiceNET.Entities.IUser,
                                           message As String)
         MyBase.OnPrivateMessage(from, [to], message)
 

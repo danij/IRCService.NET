@@ -45,7 +45,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 return;
             }
 
-            User user = Service.GetUser(spaceSplit[0]);
+            var user = Service.GetUser(spaceSplit[0]);
             if (user == null)
             {
                 Service.AddLog("Unknown user " + spaceSplit[0] + " creates channel "
@@ -57,7 +57,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 new UnixTimestamp(Convert.ToInt32(spaceSplit[3]));
             string[] channels = spaceSplit[2].Split(',');
 
-            Channel currentChannel;
+            IChannel currentChannel;
 
             foreach (string item in channels)
             {
@@ -65,15 +65,15 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 if (currentChannel == null)
                 {
                     currentChannel = 
-                        user.Server.CreateChannel(item, creationTimestamp);
-                    user.Server.AddChannel(currentChannel);
+                        (user.Server as Server).CreateChannel(item, creationTimestamp);
+                    (user.Server as Server).AddChannel(currentChannel);
                     Service.SendActionToPlugins(p => p.OnNewChannel(item));
                 }
                 else
                 {
-                    currentChannel.CreationTimeStamp = creationTimestamp;
+                    (currentChannel as Channel).CreationTimeStamp = creationTimestamp;
                 }
-                currentChannel.AddUser(user, true, false, false);
+                (currentChannel as Channel).AddUser(user, true, false, false);
                 Service.SendActionToPlugins(
                     p => p.OnChannelJoin(item, user),
                     user.Plugin

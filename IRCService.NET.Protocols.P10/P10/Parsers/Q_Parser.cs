@@ -67,13 +67,13 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 return;
             }
 
-            User toRemove = Service.GetUser(spaceSplit[0]);
+            var toRemove = Service.GetUser(spaceSplit[0]);
             if (toRemove == null)
             {
                 Service.AddLog("Unable to find " + spaceSplit[0]);
                 return;
             }
-            toRemove.Server.RemoveUser(toRemove);
+            (toRemove.Server as Server).RemoveUser(toRemove);
 
             Service.SendActionToPlugins(p => p.OnUserQuit(toRemove, reason));
         }

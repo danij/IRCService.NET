@@ -45,8 +45,8 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 return;
             }
 
-            User from = null;
-            Server serverFrom = null;
+            IUser from = null;
+            IServer serverFrom = null;
 
             if (spaceSplit[0].Length == 5)
             {
@@ -97,7 +97,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
             }
             if (spaceSplit[2][0] != '#')
             {
-                User to = Service.GetUser(spaceSplit[2]);
+                var to = Service.GetUser(spaceSplit[2]);
                 if (to == null)
                 {
                     Service.AddLog("Private Message for unknown user " + 

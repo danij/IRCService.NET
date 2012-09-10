@@ -40,8 +40,8 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 return;
             }
 
-            User from = null;
-            Server serverFrom = null;
+            IUser from = null;
+            IServer serverFrom = null;
             if (spaceSplit[0].Length == 5)
             {
                 from = Service.GetUser(spaceSplit[0]);
@@ -61,8 +61,8 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 }
             }
 
-            List<Channel> channelList = new List<Channel>();
-            Channel channelToAdd;
+            var channelList = new List<IChannel>();
+            IChannel channelToAdd;
             foreach (var item in Service.Servers)
             {
                 channelToAdd = item.GetChannel(spaceSplit[2]);

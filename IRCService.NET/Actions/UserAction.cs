@@ -52,13 +52,13 @@ namespace IRCServiceNET.Actions
         /// Default constructor
         /// </summary>
         /// <param name="user"></param>
-        public UserAction(User user)
+        public UserAction(IUser user)
         {
             if (user == null)
             {
                 throw new ArgumentNullException("User");
             }
-            User = user;
+            User = user as User;
             Server = user.Server;
             Plugin = user.Plugin;
             CheckPlugin();
@@ -71,7 +71,7 @@ namespace IRCServiceNET.Actions
         /// <param name="reason"></param>
         public void Quit(string reason)
         {
-            User.Server.RemoveUser(User);
+            (User.Server as Server).RemoveUser(User);
             if (User.Server.Service.BurstCompleted)
             {
                 var command = 
@@ -237,7 +237,7 @@ namespace IRCServiceNET.Actions
         /// <param name="to"></param>
         /// <param name="message"></param>
         /// <returns>TRUE if the message is successfully sent</returns>
-        public bool SendPrivateMessage(User to, string message)
+        public bool SendPrivateMessage(IUser to, string message)
         {
             if (to == null || to == User)
             {
@@ -256,7 +256,7 @@ namespace IRCServiceNET.Actions
         /// <param name="to"></param>
         /// <param name="message"></param>
         /// <returns>TRUE if the message is successfully sent</returns>
-        public bool SendPrivateNotice(User to, string message)
+        public bool SendPrivateNotice(IUser to, string message)
         {
             if (to == null || to == User)
             {
@@ -316,7 +316,7 @@ namespace IRCServiceNET.Actions
         /// <param name="ctcp"></param>
         /// <param name="parameter"></param>
         /// <returns>TRUE if the reply is successfully sent</returns>
-        public bool SendCTCPReply(User to, string ctcp, string parameter)
+        public bool SendCTCPReply(IUser to, string ctcp, string parameter)
         {
             return SendPrivateNotice(to, IRCConstants.CTCP + ctcp + " " +
                 parameter + IRCConstants.CTCP);
@@ -342,7 +342,7 @@ namespace IRCServiceNET.Actions
         /// <param name="toDisconnect"></param>
         /// <param name="reason"></param>
         /// <returns>TRUE if the user is succesfully disconnected</returns>
-        public bool DisconnectUser(User toDisconnect, string reason)
+        public bool DisconnectUser(IUser toDisconnect, string reason)
         {
             if (toDisconnect == null)
             {
@@ -372,7 +372,7 @@ namespace IRCServiceNET.Actions
             {
                 return false;
             }
-            Channel channel = Plugin.Service.GetChannel(channelName);
+            var channel = Plugin.Service.GetChannel(channelName);
             if (channel == null)
             {
                 var command = 
@@ -438,7 +438,7 @@ namespace IRCServiceNET.Actions
         /// <param name="user"></param>
         /// <param name="reason"></param>
         /// <returns>TRUE if the user is sucessfully kicked</returns>
-        public bool KickUser(string channel, User user, string reason)
+        public bool KickUser(string channel, IUser user, string reason)
         {
             if (channel.Length < 2)
             {

@@ -27,6 +27,6 @@ namespace IRCServiceNET.Protocols
     /// </summary>
     public abstract class ChangeNickCommand : ICommand
     {
-        public User User { get; set; }
+        public IUser User { get; set; }
     }
 }

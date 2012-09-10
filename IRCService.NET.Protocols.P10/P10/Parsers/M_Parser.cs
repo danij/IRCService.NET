@@ -42,8 +42,8 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 return;
             }
 
-            User from = null;
-            Server serverFrom = null;
+            IUser from = null;
+            IServer serverFrom = null;
             if (spaceSplit[0].Length == 5)
             {
                 from = Service.GetUser(spaceSplit[0]);
@@ -67,7 +67,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
 
             if (spaceSplit[2][0] != '#')
             {
-                User userAffected = Service.GetUserByNick(spaceSplit[2]);
+                User userAffected = Service.GetUserByNick(spaceSplit[2]) as User;
                 if (userAffected == null)
                 {
                     Service.AddLog("Mode change for unknown user " + spaceSplit[0]);
@@ -131,8 +131,8 @@ namespace IRCServiceNET.Protocols.P10.Parsers
             }
             else
             {
-                List<Channel> channelList = new List<Channel>();
-                Channel channelToAdd;
+                var channelList = new List<IChannel>();
+                IChannel channelToAdd;
                 foreach (var item in Service.Servers)
                 {
                     channelToAdd = item.GetChannel(spaceSplit[2]);
@@ -176,7 +176,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                     case 's': mode = ChannelModes.s; break;
                                     case 'm': mode = ChannelModes.m; break;
                                 }
-                                item.SetMode(mode, change);
+                                (item as Channel).SetMode(mode, change);
                             }
                             foreach (var item in Service.Plugins)
                             {
@@ -379,7 +379,8 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                         case 'o':
                         case 'v':
                         case 'h':
-                            userAffected = Service.GetUser(spaceSplit[crIndex]);                            
+                            userAffected = 
+                                Service.GetUser(spaceSplit[crIndex]) as User;
                             if (userAffected == null)
                             {
                                 Service.AddLog("Mode change for unknown user " + 
@@ -387,7 +388,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                 continue;
                             }
                             crIndex++;
-                            Channel userChannel = 
+                            IChannel userChannel = 
                                 userAffected.Server.GetChannel(spaceSplit[2]);
                             if (userChannel == null)
                             {

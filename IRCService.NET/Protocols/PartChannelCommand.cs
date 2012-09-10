@@ -27,7 +27,7 @@ namespace IRCServiceNET.Protocols
     /// </summary>
     public abstract class PartChannelCommand : ICommand
     {
-        public User From { get; set; }
+        public IUser From { get; set; }
         public string Channel { get; set; }
         public string Reason { get; set; }
     }

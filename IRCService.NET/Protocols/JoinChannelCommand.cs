@@ -27,7 +27,7 @@ namespace IRCServiceNET.Protocols
     /// </summary>
     public abstract class JoinChannelCommand : ICommand
     {
-        public User From { get; set; }
+        public IUser From { get; set; }
         public string Channel { get; set; }
         public bool Create { get; set; }
     }

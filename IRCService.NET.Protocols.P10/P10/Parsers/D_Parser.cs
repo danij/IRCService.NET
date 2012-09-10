@@ -41,15 +41,15 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 return;
             }
 
-            User toRemove = Service.GetUser(spaceSplit[2]);
+            var toRemove = Service.GetUser(spaceSplit[2]);
             if (toRemove == null)
             {
                 Service.AddLog("Unable to find " + spaceSplit[2]);
                 return;
             }
 
-            User from = null;
-            Server serverFrom = null;
+            IUser from = null;
+            IServer serverFrom = null;
             if (spaceSplit[0].Length == 5)
             {
                 from = Service.GetUser(spaceSplit[0]);
@@ -76,7 +76,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 }
             }
 
-            toRemove.Server.RemoveUser(toRemove);
+            (toRemove.Server as Server).RemoveUser(toRemove);
             string reason = "";
 
             if (colonSplit.Count() > 1)

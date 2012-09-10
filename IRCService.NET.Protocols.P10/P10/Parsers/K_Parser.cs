@@ -41,8 +41,8 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 return;
             }
 
-            User from = null;
-            Server serverFrom = null;
+            IUser from = null;
+            IServer serverFrom = null;
             if (spaceSplit[0].Length == 5)
             {
                 from = Service.GetUser(spaceSplit[0]);
@@ -68,21 +68,21 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                     return;
                 }
             }
-            User kickedUser = Service.GetUser(spaceSplit[3]);
+            var kickedUser = Service.GetUser(spaceSplit[3]);
             if (kickedUser == null)
             {
                 Service.AddLog("Unknown user " + spaceSplit[3] + 
                     " was kicked from " + spaceSplit[2]);
                 return;
             }
-            Channel channel = kickedUser.Server.GetChannel(spaceSplit[2]);
+            var channel = kickedUser.Server.GetChannel(spaceSplit[2]);
             if (channel == null)
             {
                 Service.AddLog("Unknown channel " + spaceSplit[2] + " on server " +
                     kickedUser.Server.Name);
                 return;
             }
-            if ( ! channel.RemoveUser(kickedUser))
+            if ( ! (channel as Channel).RemoveUser(kickedUser))
             {
                 Service.AddLog(kickedUser.Nick + " was not on " + spaceSplit[2]);
                 return;

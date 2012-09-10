@@ -30,8 +30,8 @@ namespace IRCServiceNET.Plugins
     /// </summary>
     public abstract class IRCServicePlugin
     {
-        private List<Server> servers;
-        private Server mainServer;
+        private List<IServer> servers;
+        private IServer mainServer;
         private object lockObject = new object();
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace IRCServiceNET.Plugins
         /// </summary>
         /// <param name="server"></param>
         /// <returns></returns>
-        private string FindFreeNumeric(Server server)
+        private string FindFreeNumeric(IServer server)
         {
             lock (lockObject)
             {
@@ -73,7 +73,7 @@ namespace IRCServiceNET.Plugins
             }
             Service = service;
             service.RegisterPlugin(this);
-            servers = new List<Server>();
+            servers = new List<IServer>();
         }
 
 #region Properties
@@ -88,20 +88,20 @@ namespace IRCServiceNET.Plugins
         /// <summary>
         /// Gets or sets the plugin's main server
         /// </summary>
-        public Server MainServer
+        public IServer MainServer
         {
             get { return mainServer; }
             set 
             { 
                 mainServer = value;
-                mainServer.Plugin = this;
+                ((Server)mainServer).Plugin = this;
             }
         }
         /// <summary>
         /// Gets all servers owned by the plugin
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Server> Servers
+        public IEnumerable<IServer> Servers
         {
             get
             {
@@ -121,8 +121,8 @@ namespace IRCServiceNET.Plugins
         /// <param name="upLink"></param>
         /// <returns>The new server if it is successfully added 
         /// or null if not</returns>
-        public Server AddServer(string numeric, string name, string description, 
-            int maxUsers, Server upLink = null)
+        public IServer AddServer(string numeric, string name, string description, 
+            int maxUsers, IServer upLink = null)
         {
             lock (lockObject)
             {
@@ -130,7 +130,7 @@ namespace IRCServiceNET.Plugins
                 {
                     return null;
                 }
-                Server newServer = new Server(Service, numeric, name, description,
+                var newServer = new Server(Service, numeric, name, description,
                     UnixTimestamp.CurrentTimestamp(), maxUsers, true, upLink);
                 newServer.Plugin = this;
                 servers.Add(newServer);
@@ -155,7 +155,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="server"></param>
         /// <param name="reason"></param>
         /// <returns>TRUE if the server is successfully removed</returns>
-        public bool RemoveServer(Server server, string reason)
+        public bool RemoveServer(IServer server, string reason)
         {
             lock (lockObject)
             {
@@ -167,7 +167,7 @@ namespace IRCServiceNET.Plugins
                 {
                     return false;
                 }
-                foreach (Server item in Service.Servers.ToArray())
+                foreach (var item in Service.Servers.ToArray())
                 {
                     if (item.UpLink == server)
                     {
@@ -203,7 +203,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="IP"></param>
         /// <returns>The new user if it is successfully created and added 
         /// or null if not</returns>
-        public User CreateUser(Server server, string nick, string ident, 
+        public IUser CreateUser(IServer server, string nick, string ident, 
             string host, string name, IPAddress IP)
         {
             lock (lockObject)
@@ -216,13 +216,13 @@ namespace IRCServiceNET.Plugins
                 {
                     return null;
                 }
-                User newUser = new User(server, FindFreeNumeric(server), nick, ident,
+                var newUser = new User(server, FindFreeNumeric(server), nick, ident,
                     host, name, UnixTimestamp.CurrentTimestamp(), IP, this);
                 if (newUser == null)
                 {
                     return null;
                 }
-                server.AddUser(newUser);
+                (server as Server).AddUser(newUser);
 
                 if (Service.BurstCompleted)
                 {
@@ -245,13 +245,13 @@ namespace IRCServiceNET.Plugins
         /// Occurs when a new server joins the network
         /// </summary>
         /// <param name="server"></param>
-        public virtual void OnNewServer(Server server) { }
+        public virtual void OnNewServer(IServer server) { }
         /// <summary>
         /// Occurs when a server disconnects
         /// </summary>
         /// <param name="server"></param>
         /// <param name="reason"></param>
-        public virtual void OnServerDisconnect(Server server, string reason)
+        public virtual void OnServerDisconnect(IServer server, string reason)
         {
             servers.Remove(server);
         }
@@ -260,30 +260,30 @@ namespace IRCServiceNET.Plugins
         /// </summary>
         /// <param name="server"></param>
         /// <param name="message"></param>
-        public virtual void OnServerNotice(Server server, string message) { }
+        public virtual void OnServerNotice(IServer server, string message) { }
         /// <summary>
         /// Occurs when a new user connects
         /// </summary>
         /// <param name="newUser"></param>
-        public virtual void OnNewUser(User newUser) { }
+        public virtual void OnNewUser(IUser newUser) { }
         /// <summary>
         /// Occurs when a user successfully logs in
         /// </summary>
         /// <param name="newUser"></param>
-        public virtual void OnUserLogin(User newUser) { }
+        public virtual void OnUserLogin(IUser newUser) { }
         /// <summary>
         /// Occurs when a user quits
         /// </summary>
         /// <param name="user"></param>
         /// <param name="reason"></param>
-        public virtual void OnUserQuit(User user, string reason) { }
+        public virtual void OnUserQuit(IUser user, string reason) { }
         /// <summary>
         /// Occurs when a user is disconnected by force by a user
         /// </summary>
         /// <param name="user"></param>
         /// <param name="byWho"></param>
         /// <param name="reason"></param>
-        public virtual void OnUserKilled(User user, User byWho, string reason)
+        public virtual void OnUserKilled(IUser user, IUser byWho, string reason)
         {
 
         }
@@ -293,7 +293,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="user"></param>
         /// <param name="byWho"></param>
         /// <param name="reason"></param>
-        public virtual void OnUserKilled(User user, Server byWho, string reason) 
+        public virtual void OnUserKilled(IUser user, IServer byWho, string reason) 
         {
 
         }
@@ -301,47 +301,47 @@ namespace IRCServiceNET.Plugins
         /// Occurs when a user changes his nick
         /// </summary>
         /// <param name="user"></param>
-        public virtual void OnUserChangeNick(User user) { }
+        public virtual void OnUserChangeNick(IUser user) { }
         /// <summary>
         /// Occurs when a user changes his fake host
         /// </summary>
         /// <param name="user"></param>
-        public virtual void OnUserChangeFakeHost(User user) { }
+        public virtual void OnUserChangeFakeHost(IUser user) { }
         /// <summary>
         /// Occurs when a user changes his invisible mode
         /// </summary>
         /// <param name="user"></param>
-        public virtual void OnUserChangeInvisible(User user) { }
+        public virtual void OnUserChangeInvisible(IUser user) { }
         /// <summary>
         /// Occurs when a user changes his oper mode
         /// </summary>
         /// <param name="user"></param>
-        public virtual void OnUserChangeOper(User user) { }
+        public virtual void OnUserChangeOper(IUser user) { }
         /// <summary>
         /// Occurs when a user changes his service mode
         /// </summary>
         /// <param name="user"></param>
-        public virtual void OnUserChangeService(User user) { }
+        public virtual void OnUserChangeService(IUser user) { }
         /// <summary>
         /// Occurs when a user changes his wallops mode
         /// </summary>
         /// <param name="user"></param>
-        public virtual void OnUserChangeWallOps(User user) { }
+        public virtual void OnUserChangeWallOps(IUser user) { }
         /// <summary>
         /// Occurs when a user changes his deaf mode
         /// </summary>
         /// <param name="user"></param>
-        public virtual void OnUserChangeDeaf(User user) { }
+        public virtual void OnUserChangeDeaf(IUser user) { }
         /// <summary>
         /// Occurs when a user changes his global notice mode
         /// </summary>
         /// <param name="user"></param>
-        public virtual void OnUserChangeGlobalNotice(User user) { }
+        public virtual void OnUserChangeGlobalNotice(IUser user) { }
         /// <summary>
         /// Occurs when a user changes his server notice mode
         /// </summary>
         /// <param name="user"></param>
-        public virtual void OnUserChangeServerNotice(User user) { }
+        public virtual void OnUserChangeServerNotice(IUser user) { }
         /// <summary>
         /// Occurs when a new channel is created
         /// </summary>
@@ -352,14 +352,14 @@ namespace IRCServiceNET.Plugins
         /// </summary>
         /// <param name="channel"></param>
         /// <param name="user"></param>
-        public virtual void OnChannelJoin(string channel, User user) { }
+        public virtual void OnChannelJoin(string channel, IUser user) { }
         /// <summary>
         /// Occurs when a user leaves a channel
         /// </summary>
         /// <param name="channel"></param>
         /// <param name="user"></param>
         /// <param name="reason"></param>
-        public virtual void OnChannelPart(string channel, User user, 
+        public virtual void OnChannelPart(string channel, IUser user, 
             string reason) { }
         /// <summary>
         /// Occurs when a user is kicked from a channel by a user
@@ -368,7 +368,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="user"></param>
         /// <param name="byWho"></param>
         /// <param name="reason"></param>
-        public virtual void OnChannelKick(string channel, User user, User byWho,
+        public virtual void OnChannelKick(string channel, IUser user, IUser byWho,
             string reason) { }
         /// <summary>
         /// Occurs when a user is kicked from a channel by a server
@@ -377,7 +377,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="user"></param>
         /// <param name="byWho"></param>
         /// <param name="reason"></param>
-        public virtual void OnChannelKick(string channel, User user, Server byWho, 
+        public virtual void OnChannelKick(string channel, IUser user, IServer byWho, 
             string reason) { }
         /// <summary>
         /// Occurs when a ban is added to a channel by a user
@@ -386,7 +386,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="ban"></param>
         /// <param name="byWho"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelAddBan(string channel, Ban ban, User byWho, 
+        public virtual void OnChannelAddBan(string channel, Ban ban, IUser byWho, 
             bool opMode) { }
         /// <summary>
         /// Occurs when a ban is added to a channel by a server
@@ -395,7 +395,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="ban"></param>
         /// <param name="byWho"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelAddBan(string channel, Ban ban, Server byWho, 
+        public virtual void OnChannelAddBan(string channel, Ban ban, IServer byWho, 
             bool opMode) { }
         /// <summary>
         /// Occurs when a ban is removed from a channel by a user
@@ -404,7 +404,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="ban"></param>
         /// <param name="byWho"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelRemoveBan(string channel, Ban ban, User byWho,
+        public virtual void OnChannelRemoveBan(string channel, Ban ban, IUser byWho,
             bool opMode) { }
         /// <summary>
         /// Occurs when a ban is removed from a channel by a server
@@ -414,7 +414,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="byWho"></param>
         /// <param name="opMode"></param>
         public virtual void OnChannelRemoveBan(string channel, Ban ban, 
-            Server byWho, bool opMode) { }
+            IServer byWho, bool opMode) { }
         /// <summary>
         /// Occurs when a user is granted op on a channel by a user
         /// </summary>
@@ -422,7 +422,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelOp(string channel, User to, User from, 
+        public virtual void OnChannelOp(string channel, IUser to, IUser from, 
             bool opMode) { }
         /// <summary>
         /// Occurs when a user is granted op on a channel by a server
@@ -431,7 +431,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelOp(string channel, User to, Server from, 
+        public virtual void OnChannelOp(string channel, IUser to, IServer from, 
             bool opMode) { }
         /// <summary>
         /// Occurs when a user removes a user's op on a channel
@@ -440,7 +440,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelDeOp(string channel, User to, User from, 
+        public virtual void OnChannelDeOp(string channel, IUser to, IUser from, 
             bool opMode) { }
         /// <summary>
         /// Occurs when a server removes a user's op on a channel
@@ -449,7 +449,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelDeOp(string channel, User to, Server from,
+        public virtual void OnChannelDeOp(string channel, IUser to, IServer from,
             bool opMode) { }
         /// <summary>
         /// Occurs when a user is granted halfop on a channel by a user
@@ -458,7 +458,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelHalfOp(string channel, User to, User from, 
+        public virtual void OnChannelHalfOp(string channel, IUser to, IUser from, 
             bool opMode) { }
         /// <summary>
         /// Occurs when a user is granted halfop on a channel by a server
@@ -467,7 +467,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelHalfOp(string channel, User to, Server from, 
+        public virtual void OnChannelHalfOp(string channel, IUser to, IServer from, 
             bool opMode) { }
         /// <summary>
         /// Occurs when a user removes a user's halfop on a channel
@@ -476,7 +476,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelDeHalfOp(string channel, User to, User from, 
+        public virtual void OnChannelDeHalfOp(string channel, IUser to, IUser from, 
             bool opMode) { }
         /// <summary>
         /// Occurs when a server removes a user's halfop on a channel
@@ -485,7 +485,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelDeHalfOp(string channel, User to, Server from,
+        public virtual void OnChannelDeHalfOp(string channel, IUser to, IServer from,
             bool opMode) { }
         /// <summary>
         /// Occurs when a user is granted voice on a channel by a user
@@ -494,7 +494,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelVoice(string channel, User to, User from, 
+        public virtual void OnChannelVoice(string channel, IUser to, IUser from, 
             bool opMode) { }
         /// <summary>
         /// Occurs when a user is granted voice on a channel by a server
@@ -503,7 +503,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelVoice(string channel, User to, Server from, 
+        public virtual void OnChannelVoice(string channel, IUser to, IServer from, 
             bool opMode) { }
         /// <summary>
         /// Occurs when a user removes a user's a voice on a channel
@@ -512,7 +512,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelDeVoice(string channel, User to, User from, 
+        public virtual void OnChannelDeVoice(string channel, IUser to, IUser from, 
             bool opMode) { }
         /// <summary>
         /// Occurs when a server removes a user's voice on a channel
@@ -521,7 +521,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelDeVoice(string channel, User to, Server from,
+        public virtual void OnChannelDeVoice(string channel, IUser to, IServer from,
             bool opMode) { }
         /// <summary>
         /// Occurs when a user changes a channel's key
@@ -530,7 +530,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="key"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelKey(string channel, string key, User from, 
+        public virtual void OnChannelKey(string channel, string key, IUser from, 
             bool opMode) { }
         /// <summary>
         /// Occurs when a server changes a channel's key
@@ -539,7 +539,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="key"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelKey(string channel, string key, Server from,
+        public virtual void OnChannelKey(string channel, string key, IServer from,
             bool opMode) { }
         /// <summary>
         /// Occurs when a user changes a channel's limit
@@ -548,7 +548,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="limit"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelLimit(string channel, int limit, User from, 
+        public virtual void OnChannelLimit(string channel, int limit, IUser from, 
             bool opMode) { }
         /// <summary>
         /// Occurs when a server changes a channel's limit
@@ -557,7 +557,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="limit"></param>
         /// <param name="from"></param>
         /// <param name="opMode"></param>
-        public virtual void OnChannelLimit(string channel, int limit, Server from,
+        public virtual void OnChannelLimit(string channel, int limit, IServer from,
             bool opMode) { }
         /// <summary>
         /// Occurs when a user changes a channel's mode
@@ -568,7 +568,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="opMode"></param>
         public virtual void OnChannelModeChange(string channel, char mode, 
-            bool status, User from, bool opMode) { }
+            bool status, IUser from, bool opMode) { }
         /// <summary>
         /// Occurs when a server changes a channel's mode
         /// </summary>
@@ -578,7 +578,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="opMode"></param>
         public virtual void OnChannelModeChange(string channel, char mode, 
-            bool status, Server from, bool opMode) { }
+            bool status, IServer from, bool opMode) { }
         /// <summary>
         /// Occurs when a user cleares all the modes on a channel
         /// </summary>
@@ -586,7 +586,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="modes"></param>
         /// <param name="from"></param>
         public virtual void OnChannelClearModes(string channel, string modes, 
-            User from) { }
+            IUser from) { }
         /// <summary>
         /// Occurs when a server cleares all the modes on a channel
         /// </summary>
@@ -594,14 +594,14 @@ namespace IRCServiceNET.Plugins
         /// <param name="modes"></param>
         /// <param name="from"></param>
         public virtual void OnChannelClearModes(string channel, string modes, 
-            Server from) { }
+            IServer from) { }
         /// <summary>
         /// Occurs when a global message is sent by a user
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public virtual void OnGlobalMessage(User from, string to, string message)
+        public virtual void OnGlobalMessage(IUser from, string to, string message)
         {
 
         }
@@ -611,7 +611,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public virtual void OnGlobalMessage(Server from, string to, string message)
+        public virtual void OnGlobalMessage(IServer from, string to, string message)
         {
 
         }
@@ -621,7 +621,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public virtual void OnGlobalNotice(User from, string to, string message)
+        public virtual void OnGlobalNotice(IUser from, string to, string message)
         {
 
         }
@@ -631,7 +631,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public virtual void OnGlobalNotice(Server from, string to, string message)
+        public virtual void OnGlobalNotice(IServer from, string to, string message)
         {
 
         }
@@ -642,7 +642,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public virtual void OnPrivateMessage(User from, User to, string message)
+        public virtual void OnPrivateMessage(IUser from, IUser to, string message)
         {
 
         }
@@ -653,7 +653,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public virtual void OnPrivateMessage(Server from, User to, string message)
+        public virtual void OnPrivateMessage(IServer from, IUser to, string message)
         {
 
         }
@@ -665,7 +665,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="ctcp"></param>
         /// <param name="parameter"></param>
-        public virtual void OnPrivateCTCP(User from, User to, string ctcp, 
+        public virtual void OnPrivateCTCP(IUser from, IUser to, string ctcp, 
             string parameter) { }
         /// <summary>
         /// Occurs when a user owned by the plugin receives a CTCP request 
@@ -675,7 +675,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="ctcp"></param>
         /// <param name="parameter"></param>
-        public virtual void OnPrivateCTCP(Server from, User to, string ctcp, 
+        public virtual void OnPrivateCTCP(IServer from, IUser to, string ctcp, 
             string parameter) { }
         /// <summary>
         /// Occurs when a user owned by the plugin receives a notice from a user
@@ -683,14 +683,14 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public virtual void OnNotice(User from, User to, string message) { }
+        public virtual void OnNotice(IUser from, IUser to, string message) { }
         /// <summary>
         /// Occurs when a user owned by the plugin receives a notice from a server
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public virtual void OnNotice(Server from, User to, string message) { }
+        public virtual void OnNotice(IServer from, IUser to, string message) { }
         /// <summary>
         /// Occurs when a user owned by the plugin receives a CTCP reply 
         /// from a user
@@ -699,7 +699,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="ctcp"></param>
         /// <param name="parameter"></param>
-        public virtual void OnCTCPReply(User from, User to, string ctcp, 
+        public virtual void OnCTCPReply(IUser from, IUser to, string ctcp, 
             string parameter) { }
         /// <summary>
         /// Occurs when a user owned by the plugin receives a CTCP reply 
@@ -709,7 +709,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="ctcp"></param>
         /// <param name="parameter"></param>
-        public virtual void OnCTCPReply(Server from, User to, string ctcp, 
+        public virtual void OnCTCPReply(IServer from, IUser to, string ctcp, 
             string parameter) { }
         /// <summary>
         /// Occurs when a user sends a channel message
@@ -717,7 +717,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public virtual void OnChannelMessage(User from, string to, 
+        public virtual void OnChannelMessage(IUser from, string to, 
             string message) { }
         /// <summary>
         /// Occurs when a server sends a channel message
@@ -725,7 +725,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public virtual void OnChannelMessage(Server from, string to, 
+        public virtual void OnChannelMessage(IServer from, string to, 
             string message) { }
         /// <summary>
         /// Occurs when a user sends a channel CTCP request
@@ -734,7 +734,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="ctcp"></param>
         /// <param name="parameter"></param>
-        public virtual void OnChannelCTCP(User from, string to, string ctcp, 
+        public virtual void OnChannelCTCP(IUser from, string to, string ctcp, 
             string parameter) { }
         /// <summary>
         /// Occurs when a server sends a channel CTCP request
@@ -743,7 +743,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="to"></param>
         /// <param name="ctcp"></param>
         /// <param name="parameter"></param>
-        public virtual void OnChannelCTCP(Server from, string to, string ctcp, 
+        public virtual void OnChannelCTCP(IServer from, string to, string ctcp, 
             string parameter) { }
         /// <summary>
         /// Occurs when a user sends a channel notice
@@ -751,7 +751,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public virtual void OnChannelNotice(User from, string to, string message) 
+        public virtual void OnChannelNotice(IUser from, string to, string message) 
         {
 
         }
@@ -761,7 +761,7 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public virtual void OnChannelNotice(Server from, string to, string message)
+        public virtual void OnChannelNotice(IServer from, string to, string message)
         {
 
         }
@@ -771,13 +771,13 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public virtual void OnWallops(Server from, string message) { }
+        public virtual void OnWallops(IServer from, string message) { }
         /// <summary>
         /// Occurs when a user sends a wallops
         /// </summary>
         /// <param name="from"></param>
         /// <param name="message"></param>
-        public virtual void OnWallops(User from, string message) { }
+        public virtual void OnWallops(IUser from, string message) { }
     #endregion
 
 #endregion

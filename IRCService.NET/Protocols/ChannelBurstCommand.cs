@@ -28,8 +28,8 @@ namespace IRCServiceNET.Protocols
     /// </summary>
     public abstract class ChannelBurstCommand : ICommand
     {
-        public Server Server { get; set; }
-        public Channel Channel { get; set; }
+        public IServer Server { get; set; }
+        public IChannel Channel { get; set; }
         public UnixTimestamp BurstTimestamp { get; set; }
     }
 }

@@ -28,7 +28,7 @@ namespace IRCServiceNET.Protocols
     public abstract class KickUserCommand : ICommand
     {
         public IHasNumeric From { get; set; }
-        public User User { get; set; }
+        public IUser User { get; set; }
         public string Channel { get; set; }
         public string Reason { get; set; }       
     }

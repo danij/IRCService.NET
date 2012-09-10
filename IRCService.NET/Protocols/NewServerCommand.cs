@@ -27,6 +27,6 @@ namespace IRCServiceNET.Protocols
     /// </summary>
     public abstract class NewServerCommand : ICommand
     {
-        public Server Server { get; set; }
+        public IServer Server { get; set; }
     }
 }

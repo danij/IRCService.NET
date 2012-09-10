@@ -38,7 +38,7 @@ namespace CSharpExample
         /// <summary>
         /// Gets a simple bot
         /// </summary>
-        public User Bot { get; private set; }
+        public IUser Bot { get; private set; }
         /// <summary>
         /// Creates the bot
         /// </summary>
@@ -73,7 +73,7 @@ namespace CSharpExample
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="message"></param>
-        public override void OnPrivateMessage(User from, User to, 
+        public override void OnPrivateMessage(IUser from, IUser to, 
             string message)
         {
             base.OnPrivateMessage(from, to, message);

@@ -28,7 +28,7 @@ namespace IRCServiceNET.Protocols
     public abstract class UserDisconnectCommand : ICommand
     {
         public IHasNumeric From { get; set; }
-        public User To { get; set; }
+        public IUser To { get; set; }
         public string Reason { get; set; }
     }
 }

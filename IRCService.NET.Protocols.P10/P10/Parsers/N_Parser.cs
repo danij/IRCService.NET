@@ -39,7 +39,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
             if (spaceSplit.Count() == 4)
             {
                 //Nick Change
-                User nickChangeUser = Service.GetUser(spaceSplit[0]);
+                var nickChangeUser = Service.GetUser(spaceSplit[0]) as User;
                 if (nickChangeUser == null)
                 {
                     Service.AddLog("Nick change from unknown user " + spaceSplit[0]);

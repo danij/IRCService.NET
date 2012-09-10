@@ -45,7 +45,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 return;
             }
 
-            User user = Service.GetUser(spaceSplit[0]);
+            var user = Service.GetUser(spaceSplit[0]);
             if (user == null)
             {
                 Service.AddLog("Unknown user " + spaceSplit[0] + " leaves channel " 
@@ -62,7 +62,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
 
             foreach (string item in channels)
             {
-                leaveChannel = user.Server.GetChannel(item);
+                leaveChannel = user.Server.GetChannel(item) as Channel;
                 if (leaveChannel == null)
                 {
                     Service.AddLog("User " + user.Nick + 

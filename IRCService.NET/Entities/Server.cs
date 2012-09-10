@@ -27,7 +27,7 @@ namespace IRCServiceNET.Entities
     /// <summary>
     /// An IRC Server
     /// </summary>
-    public class Server : IHasNumeric
+    public class Server : IServer
     {
         /// <summary>
         /// Plugin that controlles the server
@@ -36,11 +36,11 @@ namespace IRCServiceNET.Entities
         /// <summary>
         /// Users on the server
         /// </summary>
-        private Dictionary<string, User> users;
+        private Dictionary<string, IUser> users;
         /// <summary>
         /// Channels on the server
         /// </summary>
-        private Dictionary<string, Channel> channels;
+        private Dictionary<string, IChannel> channels;
         /// <summary>
         /// The ServerAction instance on the user
         /// </summary>
@@ -62,7 +62,7 @@ namespace IRCServiceNET.Entities
         /// <param name="upLink">Tbe servers uplink</param>
         public Server(IRCService service, string numeric, string name, 
             string description, UnixTimestamp created, int maxUsers,
-            bool controlled, Server upLink)
+            bool controlled, IServer upLink)
         {
             Service = service;
             Numeric = numeric;
@@ -80,9 +80,9 @@ namespace IRCServiceNET.Entities
             }
             UpLink = upLink;
             Controlled = controlled;
-            users = new Dictionary<string, User>();
+            users = new Dictionary<string, IUser>();
             channels = 
-                new Dictionary<string, Channel>(StringComparer.OrdinalIgnoreCase);
+                new Dictionary<string, IChannel>(StringComparer.OrdinalIgnoreCase);
         }
 
 #region Properties
@@ -109,7 +109,7 @@ namespace IRCServiceNET.Entities
         /// <summary>
         /// Gets the uplink server
         /// </summary>
-        public Server UpLink { get; protected set; }
+        public IServer UpLink { get; protected set; }
         /// <summary>
         /// Gets the server's depth (= uplink's depth + 1)
         /// </summary>
@@ -171,7 +171,7 @@ namespace IRCServiceNET.Entities
         /// Gets all the users on the server
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<User> Users
+        public IEnumerable<IUser> Users
         {
             get
             {
@@ -182,7 +182,7 @@ namespace IRCServiceNET.Entities
         /// Gets all the channels on the server
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Channel> Channels
+        public IEnumerable<IChannel> Channels
         {
             get
             {
@@ -212,7 +212,7 @@ namespace IRCServiceNET.Entities
         /// </summary>
         /// <param name="user"></param>
         /// <returns>TRUE if the user is successfully added</returns>
-        public bool AddUser(User user)
+        public bool AddUser(IUser user)
         {
             if (user.Numeric.Length < 3)
             {
@@ -236,7 +236,7 @@ namespace IRCServiceNET.Entities
         /// </summary>
         /// <param name="user"></param>
         /// <returns>TRUE if the user is succesfully removed</returns>
-        public bool RemoveUser(User user)
+        public bool RemoveUser(IUser user)
         {
             if ( ! users.Remove(user.Numeric))
             {
@@ -245,7 +245,7 @@ namespace IRCServiceNET.Entities
             var userChannels = channels.Values.ToArray();
             foreach (var item in userChannels)
             {
-                item.RemoveUser(user, true);
+                (item as Channel).RemoveUser(user, true);
                 if (item.UserCount < 1)
                 {
                     RemoveChannel(item);
@@ -267,7 +267,7 @@ namespace IRCServiceNET.Entities
         /// </summary>
         /// <param name="numeric"></param>
         /// <returns>The user of null if it is not found</returns>
-        public User GetUser(string numeric)
+        public IUser GetUser(string numeric)
         {
             if (users.Keys.Contains(numeric))
             {
@@ -283,11 +283,11 @@ namespace IRCServiceNET.Entities
         /// </summary>
         /// <param name="nick"></param>
         /// <returns>The user or null if it is not found</returns>
-        public User GetUserByNick(string nick)
+        public IUser GetUserByNick(string nick)
         {
             try
             {
-                User result = null;
+                IUser result = null;
                 string lowerNick = nick.ToLower();
                 foreach (var item in users.Values)
                 {
@@ -320,7 +320,7 @@ namespace IRCServiceNET.Entities
         /// <param name="name"></param>
         /// <param name="creationTimeStamp"></param>
         /// <returns></returns>
-        public Channel CreateChannel(string name, 
+        public IChannel CreateChannel(string name, 
             UnixTimestamp creationTimeStamp = null)
         {
             if (creationTimeStamp == null)
@@ -334,7 +334,7 @@ namespace IRCServiceNET.Entities
         /// </summary>
         /// <param name="channel"></param>
         /// <returns>TRUE if the channel is added succesfully</returns>
-        public bool AddChannel(Channel channel)
+        public bool AddChannel(IChannel channel)
         {
             if (channels.Keys.Contains(channel.Name))
             {
@@ -348,7 +348,7 @@ namespace IRCServiceNET.Entities
         /// </summary>
         /// <param name="channel"></param>
         /// <returns>TRUE if the Channel is successfully removed</returns>
-        public bool RemoveChannel(Channel channel)
+        public bool RemoveChannel(IChannel channel)
         {
             return channels.Remove(channel.Name);
         }
@@ -357,7 +357,7 @@ namespace IRCServiceNET.Entities
         /// </summary>
         /// <param name="name"></param>
         /// <returns>The Channel or null if it is not found</returns>
-        public Channel GetChannel(string name)
+        public IChannel GetChannel(string name)
         {
             if (channels.Keys.Contains(name))
             {

@@ -26,7 +26,7 @@ namespace IRCServiceNET.Entities
     /// <summary>
     /// An IRC Channel that contains the users from one server
     /// </summary>
-    public class Channel
+    public class Channel : IChannel
     {
         /// <summary>
         /// Channel modes
@@ -54,7 +54,7 @@ namespace IRCServiceNET.Entities
         /// <param name="server"></param>
         /// <param name="name"></param>
         /// <param name="creationTimeStamp"></param>
-        public Channel(Server server, string name, 
+        public Channel(IServer server, string name, 
             UnixTimestamp creationTimeStamp)
         {
             Server = server;
@@ -71,7 +71,7 @@ namespace IRCServiceNET.Entities
         /// <summary>
         /// Gets the server that owns the channel
         /// </summary>
-        public Server Server { get; protected set; }
+        public IServer Server { get; protected set; }
         /// <summary>
         /// Gets or sets the channel's creation timestamp
         /// </summary>
@@ -125,6 +125,17 @@ namespace IRCServiceNET.Entities
             {
                 return users;
             }
+        }
+        /// <summary>
+        /// Gets all the bans from the channel
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Ban> Bans
+        {
+            get
+            {
+                return bans;
+            }            
         }
 #endregion
 
@@ -212,7 +223,7 @@ namespace IRCServiceNET.Entities
         /// <param name="voice"></param>
         /// <param name="halfop"></param>
         /// <returns>TRUE if the user is successfully added</returns>
-        public bool AddUser(User user, bool op, bool voice, bool halfop)
+        public bool AddUser(IUser user, bool op, bool voice, bool halfop)
         {
             ChannelEntry entry = new ChannelEntry(this, user);
             entry.Op = op;
@@ -226,7 +237,7 @@ namespace IRCServiceNET.Entities
                 }
             }
             users.Add(entry);
-            user.OnAddToChannel(entry);
+            (user as User).OnAddToChannel(entry);
             return true;
         }
         /// <summary>
@@ -235,17 +246,17 @@ namespace IRCServiceNET.Entities
         /// <param name="user">The user to remove</param>
         /// <param name="removeChannel">Removes the channel if it is empty</param>
         /// <returns>TRUE if the user is successfully removed</returns>
-        public bool RemoveUser(User user, bool removeChannel = true)
+        public bool RemoveUser(IUser user, bool removeChannel = true)
         {
             for (int i = 0; i < users.Count; i++)
             {
                 if (users[i].User == user)
                 {                    
-                    users[i].User.OnRemoveFromChannel(this);
+                    (users[i].User as User).OnRemoveFromChannel(this);
                     users.RemoveAt(i);
                     if (users.Count() == 0 && removeChannel)
                     {
-                        Server.RemoveChannel(this);
+                        (Server as Server).RemoveChannel(this);
                     }
                     return true;
                 }
@@ -257,7 +268,7 @@ namespace IRCServiceNET.Entities
         /// </summary>
         /// <param name="user"></param>
         /// <returns>The entry or null if it is not found</returns>
-        public ChannelEntry GetEntry(User user)
+        public ChannelEntry GetEntry(IUser user)
         {
             foreach (ChannelEntry entry in users)
             {
@@ -324,14 +335,6 @@ namespace IRCServiceNET.Entities
         public void ClearBans()
         {
             bans.Clear();
-        }
-        /// <summary>
-        /// Returns all the bans from the channel
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<Ban> GetBans()
-        {
-            return bans.ToArray();
         }
         /// <summary>
         /// Removes Op from all the users on the channel

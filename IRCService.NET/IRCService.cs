@@ -530,14 +530,14 @@ namespace IRCServiceNET
         /// <summary>
         /// Gets all the users on the network
         /// </summary>
-        public IEnumerable<User> Users
+        public IEnumerable<IUser> Users
         {
             get
             {
                 lock (lockObject)
                 {
-                    List<User> allUsers = new List<User>();
-                    foreach (KeyValuePair<string, Server> pair in servers)
+                    var allUsers = new List<IUser>();
+                    foreach (var pair in servers)
                     {
                         allUsers.AddRange(pair.Value.Users);
                     }
@@ -889,7 +889,7 @@ namespace IRCServiceNET
         /// </summary>
         /// <param name="numeric"></param>
         /// <returns>The user if found or null if not</returns>
-        public User GetUser(string numeric)
+        public IUser GetUser(string numeric)
         {
             lock (lockObject)
             {
@@ -897,12 +897,12 @@ namespace IRCServiceNET
                 {
                     return null;
                 }
-                Server uServer = GetServer(numeric.Substring(0, 2));
-                if (uServer == null)
+                var userServer = GetServer(numeric.Substring(0, 2));
+                if (userServer == null)
                 {
                     return null;
                 }
-                return uServer.GetUser(numeric);
+                return userServer.GetUser(numeric);
             }
         }
         /// <summary>
@@ -910,12 +910,12 @@ namespace IRCServiceNET
         /// </summary>
         /// <param name="nick"></param>
         /// <returns>The user if found or null if not</returns>
-        public User GetUserByNick(string nick)
+        public IUser GetUserByNick(string nick)
         {
             lock (lockObject)
             {
-                User user;
-                foreach (KeyValuePair<string, Server> pair in servers)
+                IUser user;
+                foreach (var pair in servers)
                 {
                     user = pair.Value.GetUserByNick(nick);
                     if (user != null)
@@ -959,9 +959,9 @@ namespace IRCServiceNET
         {
             lock (lockObject)
             {
-                List<ChannelEntry> entries = new List<ChannelEntry>();
-                Channel currentChannel = null;
-                foreach (KeyValuePair<string, Server> pair in servers)
+                var entries = new List<ChannelEntry>();
+                IChannel currentChannel = null;
+                foreach (var pair in servers)
                 {
                     currentChannel = pair.Value.GetChannel(channel);
                     if (currentChannel != null)
@@ -977,12 +977,12 @@ namespace IRCServiceNET
         /// </summary>
         /// <param name="channelName"></param>
         /// <returns>The channel or null if it is not found</returns>
-        public Channel GetChannel(string channelName)
+        public IChannel GetChannel(string channelName)
         {
             lock (lockObject)
             {
-                Channel result = null;
-                foreach (KeyValuePair<string, Server> pair in servers)
+                IChannel result = null;
+                foreach (var pair in servers)
                 {
                     result = pair.Value.GetChannel(channelName);
                     if (result != null)
@@ -1076,17 +1076,17 @@ namespace IRCServiceNET
         {
             lock (lockObject)
             {
-                IEnumerable<User> users;
+                IEnumerable<IUser> users;
                 foreach (IRCServicePlugin plugin in plugins)
                 {
-                    foreach (Server server in plugin.Servers)
+                    foreach (var server in plugin.Servers)
                     {
                         var command = CommandFactory.CreateNewServerCommand();
                         command.Server = server;
                         SendCommand(command, false);
 
                         users = server.Users;
-                        foreach (User user in users)
+                        foreach (var user in users)
                         {
                             AddPluginUser(user);
                         }
@@ -1103,7 +1103,7 @@ namespace IRCServiceNET
         /// Registers a plugin's user on the network
         /// </summary>
         /// <param name="user"></param>
-        private void AddPluginUser(User user)
+        private void AddPluginUser(IUser user)
         {
             string userModes = "+";
             string[] userModeParameters = null;
@@ -1189,9 +1189,9 @@ namespace IRCServiceNET
             {
                 UnixTimestamp burstTimestamp = null;
 
-                foreach (KeyValuePair<string, Channel> pair in toBurst)
+                foreach (var pair in toBurst)
                 {
-                    Channel existingChannel = GetChannel(pair.Key);
+                    var existingChannel = GetChannel(pair.Key);
                     if (existingChannel != null)
                     {
                         burstTimestamp = existingChannel.CreationTimeStamp;

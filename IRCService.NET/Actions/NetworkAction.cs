@@ -31,7 +31,7 @@ namespace IRCServiceNET.Actions
         /// <summary>
         /// The server
         /// </summary>
-        protected Server Server { get; set; }
+        protected IServer Server { get; set; }
         /// <summary>
         /// The plugin that ownes the user
         /// </summary>

@@ -39,7 +39,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
             {
                 return;
             }
-            User toChange = Service.GetUser(spaceSplit[2]);
+            var toChange = Service.GetUser(spaceSplit[2]) as User;
             if (toChange == null)
             {
                 Service.AddLog("Account for unknown user " + spaceSplit[2]);
