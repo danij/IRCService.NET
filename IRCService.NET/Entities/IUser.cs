@@ -127,5 +127,9 @@ namespace IRCServiceNET.Entities
         /// <param name="channel"></param>
         /// <returns></returns>
         ChannelEntry GetChannelEntry(string channel);
+        /// <summary>
+        /// Gets the channels that the user is on
+        /// </summary>
+        IEnumerable<string> Channels { get; }
     }
 }

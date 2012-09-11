@@ -219,6 +219,24 @@ namespace IRCServiceNET.Entities
         /// </summary>
         public IRCServicePlugin Plugin { get; protected set; }
         /// <summary>
+        /// Gets the channels that the user is on
+        /// </summary>
+        public IEnumerable<string> Channels
+        {
+            get
+            {
+                lock (lockObject)
+                {
+                    var result = new List<string>();
+                    foreach (var item in channels)
+                    {
+                        result.Add(item.Key);
+                    }
+                    return result;
+                }
+            }
+        }
+        /// <summary>
         /// Gets a UserAction instance or null if the user is not owned by
         /// a plugin
         /// </summary>
