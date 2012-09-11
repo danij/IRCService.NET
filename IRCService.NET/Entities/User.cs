@@ -42,6 +42,10 @@ namespace IRCServiceNET.Entities
         /// </summary>
         private IPAddress IPAddress;
         /// <summary>
+        /// Object for thread synchronization
+        /// </summary>
+        private object lockObject = new object();
+        /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="server"></param>
@@ -237,19 +241,25 @@ namespace IRCServiceNET.Entities
         /// </summary>
         public bool OnAddToChannel(ChannelEntry channel)
         {
-            if (channels.ContainsKey(channel.Channel.Name))
+            lock (lockObject)
             {
-                return false;
+                if (channels.ContainsKey(channel.Channel.Name))
+                {
+                    return false;
+                }
+                channels.Add(channel.Channel.Name, channel);
+                return true;
             }
-            channels.Add(channel.Channel.Name, channel);
-            return true;
         }
         /// <summary>
         /// For internal use only
         /// </summary>
         public bool OnRemoveFromChannel(IChannel channel)
         {
-            return channels.Remove(channel.Name);
+            lock (lockObject)
+            {
+                return channels.Remove(channel.Name);
+            }
         }
         /// <summary>
         /// Is the user on a channel?
@@ -258,7 +268,10 @@ namespace IRCServiceNET.Entities
         /// <returns></returns>
         public bool IsOnChannel(string channel)
         {
-            return channels.ContainsKey(channel);
+            lock (lockObject)
+            {
+                return channels.ContainsKey(channel);
+            }
         }
         /// <summary>
         /// Get the channel entry for a specific user
@@ -267,11 +280,14 @@ namespace IRCServiceNET.Entities
         /// <returns></returns>
         public ChannelEntry GetChannelEntry(string channel)
         {
-            if (!channels.ContainsKey(channel))
+            lock (lockObject)
             {
-                return null;
+                if ( ! channels.ContainsKey(channel))
+                {
+                    return null;
+                }
+                return new ChannelEntry(channels[channel]);
             }
-            return new ChannelEntry(channels[channel]);
         }        
 #endregion
     }

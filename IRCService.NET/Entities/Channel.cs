@@ -49,6 +49,10 @@ namespace IRCServiceNET.Entities
         /// </summary>
         private UnixTimestamp creationTimestamp;
         /// <summary>
+        /// Object for thread synchronization
+        /// </summary>
+        private object lockObject = new object();
+        /// <summary>
         /// Default constructor
         /// </summary>
         /// <param name="server"></param>
@@ -80,17 +84,20 @@ namespace IRCServiceNET.Entities
             get { return creationTimestamp; }
             set
             {
-                if (value.Timestamp < creationTimestamp.Timestamp)
+                lock (lockObject)
                 {
-                    for (int i = 0; i < users.Count(); i++)
+                    if (value.Timestamp < creationTimestamp.Timestamp)
                     {
-                        users[i].Op = false;
-                        users[i].HalfOp = false;
-                        users[i].Voice = false;
+                        for (int i = 0; i < users.Count(); i++)
+                        {
+                            users[i].Op = false;
+                            users[i].HalfOp = false;
+                            users[i].Voice = false;
+                        }
+                        ClearModes();
                     }
-                    ClearModes();
+                    creationTimestamp = value;
                 }
-                creationTimestamp = value;
             }
         }
         /// <summary>
@@ -106,14 +113,26 @@ namespace IRCServiceNET.Entities
         /// </summary>
         public int UserCount
         {
-            get { return users.Count; }
+            get 
+            {
+                lock (lockObject)
+                {
+                    return users.Count;
+                }
+            }
         }
         /// <summary>
         /// Is the channel empty?
         /// </summary>
         public bool IsEmpty
         {
-            get { return UserCount == 0; }
+            get 
+            {
+                lock (lockObject)
+                {
+                    return UserCount == 0;
+                }
+            }
         }
         /// <summary>
         /// Gets all channel entries
@@ -123,7 +142,10 @@ namespace IRCServiceNET.Entities
         {
             get
             {
-                return users;
+                lock (lockObject)
+                {
+                    return users.ToArray();
+                }
             }
         }
         /// <summary>
@@ -134,7 +156,10 @@ namespace IRCServiceNET.Entities
         {
             get
             {
-                return bans;
+                lock (lockObject)
+                {
+                    return bans.ToArray();
+                }
             }            
         }
 #endregion
@@ -147,7 +172,10 @@ namespace IRCServiceNET.Entities
         /// <returns></returns>
         public bool GetMode(ChannelModes mode)
         {
-            return (modes >> MathHelper.Log((int)mode) & 1) == 1;
+            lock (lockObject)
+            {
+                return (modes >> MathHelper.Log((int)mode) & 1) == 1;
+            }
         }
         /// <summary>
         /// Sets a boolean channel mode
@@ -156,15 +184,18 @@ namespace IRCServiceNET.Entities
         /// <param name="value"></param>
         public void SetMode(ChannelModes mode, bool value)
         {
-            if (value == true)
+            lock (lockObject)
             {
-                modes = modes | (int)mode;
-            }
-            else
-            {
-                if ((modes >> MathHelper.Log((int)mode) & 1) == 1)
+                if (value == true)
                 {
-                    modes = modes ^ (int)mode;
+                    modes = modes | (int)mode;
+                }
+                else
+                {
+                    if ((modes >> MathHelper.Log((int)mode) & 1) == 1)
+                    {
+                        modes = modes ^ (int)mode;
+                    }
                 }
             }
         }
@@ -174,7 +205,10 @@ namespace IRCServiceNET.Entities
         /// <param name="mode"></param>
         public void SetMode(int mode)
         {
-            modes = mode;
+            lock (lockObject)
+            {
+                modes = mode;
+            }
         }
         /// <summary>
         /// Sets a channel mode with a string parameter
@@ -183,12 +217,15 @@ namespace IRCServiceNET.Entities
         /// <param name="parameter"></param>
         public void SetMode(ChannelModes mode, string parameter)
         {
-            modes = modes | (int)mode;
-            switch (mode)
+            lock (lockObject)
             {
-                case ChannelModes.k:
-                    Key = parameter;
-                    break;
+                modes = modes | (int)mode;
+                switch (mode)
+                {
+                    case ChannelModes.k:
+                        Key = parameter;
+                        break;
+                }
             }
         }
         /// <summary>
@@ -198,12 +235,15 @@ namespace IRCServiceNET.Entities
         /// <param name="parameter"></param>
         public void SetMode(ChannelModes mode, int parameter)
         {
-            modes = modes | (int)mode;
-            switch (mode)
+            lock (lockObject)
             {
-                case ChannelModes.l:
-                    limit = parameter;
-                    break;
+                modes = modes | (int)mode;
+                switch (mode)
+                {
+                    case ChannelModes.l:
+                        limit = parameter;
+                        break;
+                }
             }
         }
         /// <summary>
@@ -211,9 +251,12 @@ namespace IRCServiceNET.Entities
         /// </summary>
         public void ClearModes()
         {
-            modes = 0;
-            Key = "";
-            limit = 0;
+            lock (lockObject)
+            {
+                modes = 0;
+                Key = "";
+                limit = 0;
+            }
         }
         /// <summary>
         /// Adds a user to the channel
@@ -225,20 +268,23 @@ namespace IRCServiceNET.Entities
         /// <returns>TRUE if the user is successfully added</returns>
         public bool AddUser(IUser user, bool op, bool voice, bool halfop)
         {
-            ChannelEntry entry = new ChannelEntry(this, user);
-            entry.Op = op;
-            entry.Voice = voice;
-            entry.HalfOp = halfop;
-            foreach (ChannelEntry item in users)
+            lock (lockObject)
             {
-                if (item.User == user)
+                ChannelEntry entry = new ChannelEntry(this, user);
+                entry.Op = op;
+                entry.Voice = voice;
+                entry.HalfOp = halfop;
+                foreach (ChannelEntry item in users)
                 {
-                    return false;
+                    if (item.User == user)
+                    {
+                        return false;
+                    }
                 }
+                users.Add(entry);
+                (user as User).OnAddToChannel(entry);
+                return true;
             }
-            users.Add(entry);
-            (user as User).OnAddToChannel(entry);
-            return true;
         }
         /// <summary>
         /// Removes a user from the channel
@@ -248,20 +294,23 @@ namespace IRCServiceNET.Entities
         /// <returns>TRUE if the user is successfully removed</returns>
         public bool RemoveUser(IUser user, bool removeChannel = true)
         {
-            for (int i = 0; i < users.Count; i++)
+            lock (lockObject)
             {
-                if (users[i].User == user)
-                {                    
-                    (users[i].User as User).OnRemoveFromChannel(this);
-                    users.RemoveAt(i);
-                    if (users.Count() == 0 && removeChannel)
+                for (int i = 0; i < users.Count; i++)
+                {
+                    if (users[i].User == user)
                     {
-                        (Server as Server).RemoveChannel(this);
+                        (users[i].User as User).OnRemoveFromChannel(this);
+                        users.RemoveAt(i);
+                        if (users.Count() == 0 && removeChannel)
+                        {
+                            (Server as Server).RemoveChannel(this);
+                        }
+                        return true;
                     }
-                    return true;
                 }
+                return false;
             }
-            return false;
         }
         /// <summary>
         /// Searches for an entry that contains the requested user
@@ -270,23 +319,29 @@ namespace IRCServiceNET.Entities
         /// <returns>The entry or null if it is not found</returns>
         public ChannelEntry GetEntry(IUser user)
         {
-            foreach (ChannelEntry entry in users)
+            lock (lockObject)
             {
-                if (entry.User == user)
+                foreach (ChannelEntry entry in users)
                 {
-                    return entry;
+                    if (entry.User == user)
+                    {
+                        return entry;
+                    }
                 }
+                return null;
             }
-            return null;
         }
         /// <summary>
         /// Clears all the users, bans and channel modes
         /// </summary>
         public void Clear()
         {
-            users.Clear();
-            ClearBans();
-            ClearModes();
+            lock (lockObject)
+            {
+                users.Clear();
+                ClearBans();
+                ClearModes();
+            }
         }        
         /// <summary>
         /// Adds a ban to the channel
@@ -295,8 +350,11 @@ namespace IRCServiceNET.Entities
         /// <returns></returns>
         public bool AddBan(Ban ban)
         {
-            bans.Add(ban);
-            return true;
+            lock (lockObject)
+            {
+                bans.Add(ban);
+                return true;
+            }
         }
         /// <summary>
         /// Adds a range of bans to the channel
@@ -305,8 +363,11 @@ namespace IRCServiceNET.Entities
         /// <returns></returns>
         public bool AddBan(IEnumerable<Ban> ban)
         {
-            bans.AddRange(ban);
-            return true;
+            lock (lockObject)
+            {
+                bans.AddRange(ban);
+                return true;
+            }
         }
         /// <summary>
         /// Removes all bans from the channel that match a specified ban
@@ -315,47 +376,59 @@ namespace IRCServiceNET.Entities
         /// <returns></returns>
         public int RemoveBans(Ban ban)
         {
-            List<Ban> toRemove = new List<Ban>();
-            foreach (Ban toremove in bans)
+            lock (lockObject)
             {
-                if (ban.Match(toremove))
+                int result = 0;
+                foreach (Ban item in bans.ToArray())
                 {
-                    toRemove.Add(toremove);
+                    if (ban.Match(item))
+                    {
+                        bans.Remove(item);
+                        result += 1;
+                    }
                 }
+                return result;
             }
-            foreach (Ban item in toRemove)
-            {
-                bans.Remove(item);
-            }
-            return toRemove.Count;
         }
         /// <summary>
         /// Clears all the bans from the channel
         /// </summary>
         public void ClearBans()
         {
-            bans.Clear();
+            lock (lockObject)
+            {
+                bans.Clear();
+            }
         }
         /// <summary>
         /// Removes Op from all the users on the channel
         /// </summary>
         public void ClearOp()
         {
-            users.ForEach(e => e.Op = false);
+            lock (lockObject)
+            {
+                users.ForEach(e => e.Op = false);
+            }
         }
         /// <summary>
         /// Removes Voice from all the users on the channel
         /// </summary>
         public void ClearVoice()
         {
-            users.ForEach(e => e.Voice = false);
+            lock (lockObject)
+            {
+                users.ForEach(e => e.Voice = false);
+            }
         }
         /// <summary>
         /// Removes HalfOp from all the users on the channel
         /// </summary>
         public void ClearHalfOp()
         {
-            users.ForEach(e => e.HalfOp = false);
+            lock (lockObject)
+            {
+                users.ForEach(e => e.HalfOp = false);
+            }
         }
 #endregion
 

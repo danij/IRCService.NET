@@ -50,6 +50,10 @@ namespace IRCServiceNET.Entities
         /// </summary>
         public const int MaxCapacity = 262143;
         /// <summary>
+        /// Object for thread synchronization
+        /// </summary>
+        private object lockObject = new object();
+        /// <summary>
         /// Constructs a new Server
         /// </summary>
         /// <param name="service">The service that the server belongs to</param>
@@ -154,7 +158,10 @@ namespace IRCServiceNET.Entities
         {
             get
             {
-                return users.Count();
+                lock (lockObject)
+                {
+                    return users.Count();
+                }
             }
         }
         /// <summary>
@@ -175,7 +182,10 @@ namespace IRCServiceNET.Entities
         {
             get
             {
-                return users.Values;
+                lock (lockObject)
+                {
+                    return users.Values;
+                }
             }
         }
         /// <summary>
@@ -186,7 +196,10 @@ namespace IRCServiceNET.Entities
         {
             get
             {
-                return channels.Values;
+                lock (lockObject)
+                {
+                    return channels.Values;
+                }
             }
         }
         /// <summary>
@@ -214,22 +227,25 @@ namespace IRCServiceNET.Entities
         /// <returns>TRUE if the user is successfully added</returns>
         public bool AddUser(IUser user)
         {
-            if (user.Numeric.Length < 3)
+            lock (lockObject)
             {
-                return false;
+                if (user.Numeric.Length < 3)
+                {
+                    return false;
+                }
+                if (users.Keys.Contains(user.Numeric))
+                {
+                    return false;
+                }
+                users.Add(user.Numeric, user);
+                int userNumeric =
+                    Base64Converter.NumericToInt(user.Numeric.Substring(2, 3));
+                if (userNumeric > MaxNumeric)
+                {
+                    MaxNumeric = userNumeric;
+                }
+                return true;
             }
-            if (users.Keys.Contains(user.Numeric))
-            {
-                return false;
-            }
-            users.Add(user.Numeric, user);
-            int userNumeric =
-                Base64Converter.NumericToInt(user.Numeric.Substring(2, 3));
-            if (userNumeric > MaxNumeric)
-            {
-                MaxNumeric = userNumeric;
-            }
-            return true;
         }
         /// <summary>
         /// Removes a user from the server
@@ -238,20 +254,23 @@ namespace IRCServiceNET.Entities
         /// <returns>TRUE if the user is succesfully removed</returns>
         public bool RemoveUser(IUser user)
         {
-            if ( ! users.Remove(user.Numeric))
+            lock (lockObject)
             {
-                return false;
-            }            
-            var userChannels = channels.Values.ToArray();
-            foreach (var item in userChannels)
-            {
-                (item as Channel).RemoveUser(user, true);
-                if (item.UserCount < 1)
+                if (!users.Remove(user.Numeric))
                 {
-                    RemoveChannel(item);
+                    return false;
                 }
-            }            
-            return true;
+                var userChannels = channels.Values.ToArray();
+                foreach (var item in userChannels)
+                {
+                    (item as Channel).RemoveUser(user, true);
+                    if (item.UserCount < 1)
+                    {
+                        RemoveChannel(item);
+                    }
+                }
+                return true;
+            }
         }
         /// <summary>
         /// Does the server contain the users numeric?
@@ -260,7 +279,10 @@ namespace IRCServiceNET.Entities
         /// <returns></returns>
         public bool ContainsNumeric(string numeric)
         {
-            return users.Keys.Contains(numeric);
+            lock (lockObject)
+            {
+                return users.Keys.Contains(numeric);
+            }
         }
         /// <summary>
         /// Searches a user by numeric
@@ -269,13 +291,16 @@ namespace IRCServiceNET.Entities
         /// <returns>The user of null if it is not found</returns>
         public IUser GetUser(string numeric)
         {
-            if (users.Keys.Contains(numeric))
+            lock (lockObject)
             {
-                return users[numeric];
-            }
-            else
-            {
-                return null;
+                if (users.Keys.Contains(numeric))
+                {
+                    return users[numeric];
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
         /// <summary>
@@ -287,17 +312,20 @@ namespace IRCServiceNET.Entities
         {
             try
             {
-                IUser result = null;
-                string lowerNick = nick.ToLower();
-                foreach (var item in users.Values)
+                lock (lockObject)
                 {
-                    if (item.Nick.ToLower() == lowerNick)
+                    IUser result = null;
+                    string lowerNick = nick.ToLower();
+                    foreach (var item in users.Values)
                     {
-                        result = item;
-                        break;
+                        if (item.Nick.ToLower() == lowerNick)
+                        {
+                            result = item;
+                            break;
+                        }
                     }
+                    return result;
                 }
-                return result;
             }
             catch (Exception)
             {                
@@ -336,12 +364,15 @@ namespace IRCServiceNET.Entities
         /// <returns>TRUE if the channel is added succesfully</returns>
         public bool AddChannel(IChannel channel)
         {
-            if (channels.Keys.Contains(channel.Name))
+            lock (lockObject)
             {
-                return false;
+                if (channels.Keys.Contains(channel.Name))
+                {
+                    return false;
+                }
+                channels.Add(channel.Name, channel);
+                return true;
             }
-            channels.Add(channel.Name, channel);
-            return true;
         }
         /// <summary>
         /// Removes a channel
@@ -350,7 +381,10 @@ namespace IRCServiceNET.Entities
         /// <returns>TRUE if the Channel is successfully removed</returns>
         public bool RemoveChannel(IChannel channel)
         {
-            return channels.Remove(channel.Name);
+            lock (lockObject)
+            {
+                return channels.Remove(channel.Name);
+            }
         }
         /// <summary>
         /// Searches a channel by name
@@ -359,11 +393,14 @@ namespace IRCServiceNET.Entities
         /// <returns>The Channel or null if it is not found</returns>
         public IChannel GetChannel(string name)
         {
-            if (channels.Keys.Contains(name))
+            lock (lockObject)
             {
-                return channels[name];
+                if (channels.Keys.Contains(name))
+                {
+                    return channels[name];
+                }
+                return null;
             }
-            return null;
         }
 #endregion
 
