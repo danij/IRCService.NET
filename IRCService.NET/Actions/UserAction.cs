@@ -45,6 +45,22 @@ namespace IRCServiceNET.Actions
             Plugin.Service.SendCommand(command, false);
         }
         /// <summary>
+        /// Checks if there are remote users on a channel
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <returns></returns>
+        private bool RemoteUsersOnChannel(string channel)
+        {
+            foreach (var item in Plugin.Servers)
+            {
+                if (item.GetChannel(channel) != null)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
         /// The user
         /// </summary>
         protected User User { get; set; }
@@ -81,8 +97,7 @@ namespace IRCServiceNET.Actions
                 Server.Service.SendCommand(command, false);
             }
             User.Server.Service.SendActionToPlugins(
-                p => p.OnUserQuit(User, reason), 
-                Plugin
+                p => p.OnUserQuit(User, reason)
             );
         }
         /// <summary>
@@ -96,7 +111,7 @@ namespace IRCServiceNET.Actions
                 User.IsInvisible = value;
                 ChangeUserMode("i", value);
                 Plugin.Service.SendActionToPlugins(
-                    p => p.OnUserChangeInvisible(User), Plugin
+                    p => p.OnUserChangeInvisible(User)
                 );
             }
         }
@@ -111,7 +126,7 @@ namespace IRCServiceNET.Actions
                 User.IsOper = value;
                 ChangeUserMode("o", value);
                 Plugin.Service.SendActionToPlugins(
-                    p => p.OnUserChangeOper(User), Plugin
+                    p => p.OnUserChangeOper(User)
                 );
             }
         }
@@ -126,7 +141,7 @@ namespace IRCServiceNET.Actions
                 User.IsService = value;
                 ChangeUserMode("k", value);
                 Plugin.Service.SendActionToPlugins(
-                    p => p.OnUserChangeService(User), Plugin
+                    p => p.OnUserChangeService(User)
                 );
             }
         }
@@ -141,7 +156,7 @@ namespace IRCServiceNET.Actions
                 User.IsDeaf = value;
                 ChangeUserMode("d", value);
                 Plugin.Service.SendActionToPlugins(
-                    p => p.OnUserChangeDeaf(User), Plugin
+                    p => p.OnUserChangeDeaf(User)
                 );
             }
         }
@@ -156,7 +171,7 @@ namespace IRCServiceNET.Actions
                 User.IsWallOps = value;
                 ChangeUserMode("w", value);
                 Plugin.Service.SendActionToPlugins(
-                    p => p.OnUserChangeWallOps(User), Plugin
+                    p => p.OnUserChangeWallOps(User)
                 );
             }
         }
@@ -171,7 +186,7 @@ namespace IRCServiceNET.Actions
                 User.IsGlobalNotice = value;
                 ChangeUserMode("g", value);
                 Plugin.Service.SendActionToPlugins(
-                    p => p.OnUserChangeGlobalNotice(User), Plugin
+                    p => p.OnUserChangeGlobalNotice(User)
                 );
             }
         }
@@ -186,7 +201,7 @@ namespace IRCServiceNET.Actions
                 User.IsServerNotice = value;
                 ChangeUserMode("s", value);
                 Plugin.Service.SendActionToPlugins(
-                    p => p.OnUserChangeServerNotice(User), Plugin
+                    p => p.OnUserChangeServerNotice(User)
                 );
             }
         }
@@ -208,7 +223,7 @@ namespace IRCServiceNET.Actions
                 ChangeUserMode("h", false);
             }
             Plugin.Service.SendActionToPlugins(
-                p => p.OnUserChangeFakeHost(User), Plugin
+                p => p.OnUserChangeFakeHost(User)
             );
         }
         /// <summary>
@@ -220,54 +235,87 @@ namespace IRCServiceNET.Actions
         {
             if (Plugin.Service.NickExists(newNick))
             {
-                return false;
+                throw new NickExistsException(newNick);
             }
             User.Nick = newNick;
             var command = Plugin.Service.CommandFactory.CreateChangeNickCommand();
             command.User = User;
             Plugin.Service.SendCommand(command, false);
             Plugin.Service.SendActionToPlugins(
-                p=> p.OnUserChangeNick(User), Plugin
+                p => p.OnUserChangeNick(User)
             );
             return true;
         }
         /// <summary>
-        /// Sends a private message to another user
+        /// Sends a private message to a user
         /// </summary>
         /// <param name="to"></param>
         /// <param name="message"></param>
         /// <returns>TRUE if the message is successfully sent</returns>
         public bool SendPrivateMessage(IUser to, string message)
         {
-            if (to == null || to == User)
+            if (String.IsNullOrEmpty(message))
             {
-                return false;
+                throw new NoMessageException();
             }
+            if (to.Server.IsControlled && to.Plugin != null)
+            {
+                if (message[0] == IRCConstants.CTCP)
+                {
+                    var split = message.Substring(1, message.Length - 2).Split(' ');
+                    if (split.Length == 2)
+                    {
+                        to.Plugin.OnPrivateCTCP(User, to, split[0], split[1]);
+                    }
+                }
+                else
+                {
+                    to.Plugin.OnPrivateMessage(User, to, message);
+                }
+                return true;
+            }
+            
             var command = Plugin.Service.CommandFactory.CreateSendMessageCommand();
             command.From = User;
             command.To = to;
             command.Message = message;
-            Plugin.Service.SendCommand(command);
+            Plugin.Service.SendCommand(command, false);
             return true;
         }
         /// <summary>
-        /// Sends a private notice to another user
+        /// Sends a private notice to a user
         /// </summary>
         /// <param name="to"></param>
         /// <param name="message"></param>
         /// <returns>TRUE if the message is successfully sent</returns>
         public bool SendPrivateNotice(IUser to, string message)
         {
-            if (to == null || to == User)
+            if (String.IsNullOrEmpty(message))
             {
-                return false;
+                throw new NoMessageException();
+            }
+            if (to.Server.IsControlled && to.Plugin != null)
+            {
+                if (message[0] == IRCConstants.CTCP)
+                {
+                    var split = message.Substring(1, message.Length - 2).Split(' ');
+                    if (split.Length == 2)
+                    {
+                        to.Plugin.OnCTCPReply(User, to, split[0], split[1]);
+                    }
+                }
+                else
+                {
+                    to.Plugin.OnNotice(User, to, message);
+                }
+                return true;
             }
             var command = Plugin.Service.CommandFactory.CreateSendMessageCommand();
             command.From = User;
             command.To = to;
             command.Message = message;
             command.UseNotice = true;
-            Plugin.Service.SendCommand(command);
+            Plugin.Service.SendCommand(command, false);
             return true;
         }
         /// <summary>
@@ -280,13 +328,56 @@ namespace IRCServiceNET.Actions
         {
             if (String.IsNullOrEmpty(to))
             {
-                return false;
+                throw new InvalidChannelException();
             }
-            var command = Plugin.Service.CommandFactory.CreateSendMessageCommand();
-            command.From = User;
-            command.To = to;
-            command.Message = message;
-            Plugin.Service.SendCommand(command);
+            if ( ! User.IsService)
+            {
+                var channel = Plugin.Service.GetChannel(to);
+                if (channel == null)
+                {
+                    throw new InvalidChannelException();
+                }
+                if ((channel.GetMode(ChannelModes.n) || 
+                    channel.GetMode(ChannelModes.m)) 
+                    && ! User.IsOnChannel(to))
+                {
+                    throw new NotOnChannelException();
+                }
+                if (channel.GetMode(ChannelModes.m))
+                {
+                    var entry = Plugin.Service.GetChannelEntry(to, User);
+                    if ( ! (entry.Op || entry.HalfOp || entry.Voice))
+                    {
+                        throw new ChannelModeratedException();
+                    }
+                }
+            }
+
+            if (message[0] == IRCConstants.CTCP)
+            {
+                var split = message.Substring(1, message.Length - 2).Split(' ');
+                if (split.Length == 2)
+                {
+                    Plugin.Service.SendActionToPlugins(
+                        p => p.OnChannelCTCP(User, to, split[0], split[1])
+                    );
+                }
+            }
+            else
+            {
+                Plugin.Service.SendActionToPlugins(
+                    p => p.OnChannelMessage(User, to, message)
+                );
+            }
+
+            if (RemoteUsersOnChannel(to))
+            {
+                var command = Plugin.Service.CommandFactory.CreateSendMessageCommand();
+                command.From = User;
+                command.To = to;
+                command.Message = message;
+                Plugin.Service.SendCommand(command, false);
+            }
             return true;
         }
         /// <summary>
@@ -299,15 +390,69 @@ namespace IRCServiceNET.Actions
         {
             if (String.IsNullOrEmpty(to))
             {
-                return false;
+                throw new InvalidChannelException();
             }
-            var command = Plugin.Service.CommandFactory.CreateSendMessageCommand();
-            command.From = User;
-            command.To = to;
-            command.Message = message;
-            command.UseNotice = true;
-            Plugin.Service.SendCommand(command);
+            if ( ! User.IsService)
+            {
+                var channel = Plugin.Service.GetChannel(to);
+                if (channel == null)
+                {
+                    throw new InvalidChannelException();
+                }
+                if ((channel.GetMode(ChannelModes.n) ||
+                    channel.GetMode(ChannelModes.m))
+                    && ! User.IsOnChannel(to))
+                {
+                    throw new NotOnChannelException();
+                }
+                if (channel.GetMode(ChannelModes.m))
+                {
+                    var entry = Plugin.Service.GetChannelEntry(to, User);
+                    if ( ! (entry.Op || entry.HalfOp || entry.Voice))
+                    {
+                        throw new ChannelModeratedException();
+                    }
+                }
+            }
+
+            Plugin.Service.SendActionToPlugins(
+                p => p.OnChannelNotice(User, to, message)
+            );
+
+            if (RemoteUsersOnChannel(to))
+            {
+                var command = Plugin.Service.CommandFactory.CreateSendMessageCommand();
+                command.From = User;
+                command.To = to;
+                command.Message = message;
+                command.UseNotice = true;
+                Plugin.Service.SendCommand(command, false);
+            }
             return true;
+        }
+        /// <summary>
+        /// Sends a CTCP request to a user
+        /// </summary>
+        /// <param name="to"></param>
+        /// <param name="ctcp"></param>
+        /// <param name="parameter"></param>
+        /// <returns>TRUE if the request is successfully sent</returns>
+        public bool SendCTCPRequest(IUser to, string ctcp, string parameter)
+        {
+            return SendPrivateMessage(to, IRCConstants.CTCP + ctcp + " " +
+                parameter + IRCConstants.CTCP);
+        }
+        /// <summary>
+        /// Sends a CTCP request to a channel
+        /// </summary>
+        /// <param name="to"></param>
+        /// <param name="ctcp"></param>
+        /// <param name="parameter"></param>
+        /// <returns>TRUE if the request is successfully sent</returns>
+        public bool SendCTCPRequest(string to, string ctcp, string parameter)
+        {
+            return SendChannelMessage(to, IRCConstants.CTCP + ctcp + " " +
+                parameter + IRCConstants.CTCP);
         }
         /// <summary>
         /// Sends a CTCP reply to a user
@@ -329,11 +474,20 @@ namespace IRCServiceNET.Actions
         /// <returns>TRUE if the message is sent successfully</returns>
         public bool SendGlobalMessage(string to, string message)
         {
+            if ( ! User.IsOper)
+            {
+                throw new NotAnIRCOperatorException();
+            }
+
+            Plugin.Service.SendActionToPlugins(
+                p => p.OnGlobalMessage(User, to, message)
+            );
+
             var command = Plugin.Service.CommandFactory.CreateSendMessageCommand();
             command.From = User;
             command.To = "$" + to;
             command.Message = message;
-            Plugin.Service.SendCommand(command);
+            Plugin.Service.SendCommand(command, false);
             return true;
         }
         /// <summary>
@@ -346,8 +500,13 @@ namespace IRCServiceNET.Actions
         {
             if (toDisconnect == null)
             {
-                return false;
+                throw new ArgumentNullException("toDisconnect");
             }
+            if ( ! User.IsOper)
+            {
+                throw new NotAnIRCOperatorException();
+            }
+            
             var command = 
                 Plugin.Service.CommandFactory.CreateUserDisconnectCommand();
             command.From = User;
@@ -364,13 +523,9 @@ namespace IRCServiceNET.Actions
         /// <returns>TRUE if the channel is successfully joined</returns>
         public bool JoinChannel(string channelName, bool op = false)
         {
-            if (channelName.Length < 2)
+            if (channelName.Length < 2 || channelName[0] != '#')
             {
-                return false;
-            }
-            if (channelName[0] != '#')
-            {
-                return false;
+                throw new InvalidChannelException();
             }
             var channel = Plugin.Service.GetChannel(channelName);
             if (channel == null)
@@ -384,6 +539,17 @@ namespace IRCServiceNET.Actions
             }
             else
             {
+                if ( ! User.IsService)
+                {
+                    foreach (var item in channel.Bans)
+                    {
+                        if (item.Match(User))
+                        {
+                            throw new BannedFromChannelException();
+                        }
+                    }
+                }
+
                 var joinCommand = 
                     Plugin.Service.CommandFactory.CreateJoinChannelCommand();
                 joinCommand.From = User;
@@ -411,18 +577,15 @@ namespace IRCServiceNET.Actions
         /// <returns>TRUE if the channel is successfully parted</returns>
         public bool PartChannel(string channel, string reason)
         {
-            if (channel.Length < 2)
+            if (channel.Length < 2 || channel[0] != '#')
             {
-                return false;
-            }
-            if (channel[0] != '#')
-            {
-                return false;
+                throw new InvalidChannelException();
             }
             if ( ! User.IsOnChannel(channel))
             {
-                return false;
+                throw new NotOnChannelException();
             }
+
             var command = 
                 Plugin.Service.CommandFactory.CreatePartChannelCommand();
             command.From = User;
@@ -440,36 +603,33 @@ namespace IRCServiceNET.Actions
         /// <returns>TRUE if the user is sucessfully kicked</returns>
         public bool KickUser(string channel, IUser user, string reason)
         {
-            if (channel.Length < 2)
+            if (channel.Length < 2 || channel[0] != '#')
             {
-                return false;
-            }
-            if (channel[0] != '#')
-            {
-                return false;
+                throw new InvalidChannelException();
             }
             if (user == null)
             {
-                return false;
+                throw new ArgumentNullException("user");
             }
             ChannelEntry currentEntry = User.GetChannelEntry(channel);
             if (currentEntry == null)
             {
-                return false;
+                throw new NotOnChannelException();
             }
             if ((currentEntry.Op == false) && (currentEntry.HalfOp == false))
             {
-                return false;
+                throw new NotAChannelOperatorException();
             }
             ChannelEntry userEntry = user.GetChannelEntry(channel);
             if (userEntry == null)
             {
-                return false;
+                throw new NotOnChannelException();
             }
             if ((userEntry.HalfOp == true) && (currentEntry.HalfOp == true))
             {
-                return false;
+                throw new NotAChannelOperatorException();
             }
+
             var command =
                 Plugin.Service.CommandFactory.CreateKickUserCommand();
             command.From = User;
@@ -490,20 +650,24 @@ namespace IRCServiceNET.Actions
         public bool SetChannelMode(string channel, bool useOpMode, string modes,
             params object[] parameters)
         {
-            if (channel == null)
+            if (String.IsNullOrEmpty(channel) || channel[0] != '#')
             {
-                return false;
-            }
-            if (channel[0] != '#')
-            {
-                return false;
+                throw new InvalidChannelException();
             }
             ChannelEntry entry = User.GetChannelEntry(channel);
-            if (entry != null)
+            if (entry == null)
             {
-                if ((entry.Op) == false && (entry.HalfOp == false) && ! useOpMode)
+                throw new NotOnChannelException();
+            }
+            if ((entry.Op) == false && (entry.HalfOp == false) && ! useOpMode)
+            {
+                throw new NotAChannelOperatorException();
+            }
+            if (entry.HalfOp)
+            {
+                if (modes.Contains('o') || modes.Contains('h'))
                 {
-                    return false;
+                    throw new NotAChannelOperatorException();
                 }
             }
             var command =

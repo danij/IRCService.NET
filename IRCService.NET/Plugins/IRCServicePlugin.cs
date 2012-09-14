@@ -163,7 +163,7 @@ namespace IRCServiceNET.Plugins
                 {
                     return false;
                 }
-                if (!server.Controlled)
+                if (!server.IsControlled)
                 {
                     return false;
                 }

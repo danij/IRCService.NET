@@ -41,7 +41,7 @@ namespace IRCServiceNET.Actions
         /// </summary>
         protected virtual void CheckPlugin()
         {
-            if ( ! Server.Controlled)
+            if ( ! Server.IsControlled)
             {
                 throw new UserNotControlledException();
             }

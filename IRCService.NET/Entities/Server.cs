@@ -84,7 +84,7 @@ namespace IRCServiceNET.Entities
                 MaxUsers = 262143;
             }
             UpLink = upLink;
-            Controlled = controlled;
+            IsControlled = controlled;
             users = new Dictionary<string, IUser>();
             channels = 
                 new Dictionary<string, IChannel>(StringComparer.OrdinalIgnoreCase);
@@ -110,7 +110,7 @@ namespace IRCServiceNET.Entities
         /// <summary>
         /// Is the server controlled by the plugin?
         /// </summary>
-        public bool Controlled { get; protected set; }
+        public bool IsControlled { get; protected set; }
         /// <summary>
         /// Gets the uplink server
         /// </summary>
@@ -141,8 +141,8 @@ namespace IRCServiceNET.Entities
             get { return plugin; }
             set
             {
-                plugin = Controlled ? value : null;
-                if (Controlled)
+                plugin = IsControlled ? value : null;
+                if (IsControlled)
                 {
                     action = new ServerAction(this);
                 }
@@ -211,7 +211,7 @@ namespace IRCServiceNET.Entities
         {
             get
             {
-                if (Controlled && Plugin != null)
+                if (IsControlled && Plugin != null)
                 {
                     return action;
                 }

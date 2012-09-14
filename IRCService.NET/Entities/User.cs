@@ -74,7 +74,7 @@ namespace IRCServiceNET.Entities
             Plugin = plugin;
             channels = new Dictionary<string, ChannelEntry>
                 (StringComparer.OrdinalIgnoreCase);
-            if (Server.Controlled)
+            if (Server.IsControlled)
             {
                 action = new UserAction(this);
             }
@@ -244,7 +244,7 @@ namespace IRCServiceNET.Entities
         {
             get
             {
-                if (Server.Controlled && Plugin != null)
+                if (Server.IsControlled && Plugin != null)
                 {
                     return action;
                 }

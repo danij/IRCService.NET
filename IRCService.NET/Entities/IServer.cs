@@ -45,7 +45,7 @@ namespace IRCServiceNET.Entities
         /// <summary>
         /// Is the server controlled by the plugin?
         /// </summary>
-        bool Controlled { get; }
+        bool IsControlled { get; }
         /// <summary>
         /// Gets the uplink server
         /// </summary>
