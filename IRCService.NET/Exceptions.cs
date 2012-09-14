@@ -119,4 +119,44 @@ namespace IRCServiceNET
             base("The user is already authenticated") { }
             
     }
+
+    [Serializable]
+    public class ChannelModeratedException : InvalidOperationException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public ChannelModeratedException() :
+            base("At least voice is needed to send messages to a moderated channel") { }
+    }
+
+    [Serializable]
+    public class NoMessageException : ArgumentException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public NoMessageException() :
+            base("No message was specified") { }
+    }
+
+    [Serializable]
+    public class InvalidChannelException : ArgumentException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public InvalidChannelException() :
+            base("Invalid channel") { }
+    }
+
+    [Serializable]
+    public class BannedFromChannelException : ArgumentException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public BannedFromChannelException() :
+            base("The user is banned from that channel") { }
+    }
 }
