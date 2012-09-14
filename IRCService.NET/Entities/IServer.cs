@@ -21,6 +21,7 @@ using System.Text;
 using IRCServiceNET.Helpers;
 using IRCServiceNET.Plugins;
 using IRCServiceNET.Actions;
+using System.Net;
 
 namespace IRCServiceNET.Entities
 {
@@ -122,5 +123,11 @@ namespace IRCServiceNET.Entities
         /// <param name="name"></param>
         /// <returns>The Channel or null if it is not found</returns>
         IChannel GetChannel(string name);
+        /// <summary>
+        /// Counts the users with the specified IP address
+        /// </summary>
+        /// <param name="IP"></param>
+        /// <returns></returns>
+        int CountUsers(IPAddress IP);
     }
 }
