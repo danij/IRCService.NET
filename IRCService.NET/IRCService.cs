@@ -954,7 +954,25 @@ namespace IRCServiceNET
             {
                 return servers.Keys.Contains(numeric);
             }
-        }        
+        }
+        /// <summary>
+        /// Returns a channel entry corresponding to the specified channel and user or null if not found
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public ChannelEntry GetChannelEntry(string channel, IUser user)
+        {
+            lock (lockObject)
+            {
+                var serverChannel = user.Server.GetChannel(channel);
+                if (serverChannel == null)
+                {
+                    return null;
+                }
+                return serverChannel.GetEntry(user);
+            }
+        }
         /// <summary>
         /// Returns all the users from a channel
         /// </summary>
