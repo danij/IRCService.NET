@@ -960,7 +960,7 @@ namespace IRCServiceNET
         /// </summary>
         /// <param name="channel"></param>
         /// <returns></returns>
-        public IEnumerable<ChannelEntry> GetChannelUsers(string channel)
+        public IEnumerable<ChannelEntry> GetChannelEntries(string channel)
         {
             lock (lockObject)
             {
