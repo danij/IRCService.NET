@@ -24,14 +24,24 @@ namespace IRCServiceNET
     [Serializable]
     public class UserNotControlledException : Exception
     {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public UserNotControlledException() : 
             base("The user is not under your plugin's control") { }
+        /// <summary>
+        /// Custom constructor
+        /// </summary>
+        /// <param name="message"></param>
         public UserNotControlledException(string message) : base(message) { }
     }
 
     [Serializable]
     public class NotPreparedForPluginsException : Exception
     {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public NotPreparedForPluginsException() :
             base("The Service is not prepared for plugins") { }
     }
@@ -39,6 +49,9 @@ namespace IRCServiceNET
     [Serializable]
     public class CannotRegisterPluginException : Exception
     {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public CannotRegisterPluginException() :
             base("You must register a plugin when the service is disconnected")
         {
@@ -48,7 +61,62 @@ namespace IRCServiceNET
     [Serializable]
     public class BurstCompletedException : Exception
     {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public BurstCompletedException() :
             base("The Burst has already been completed") { }
+    }
+
+    [Serializable]
+    public class NickExistsException : InvalidOperationException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        /// <param name="nick"></param>
+        public NickExistsException(string nick) :
+            base("The nick " + nick + " already exists on the network") { }
+    }
+
+    [Serializable]
+    public class NotAChannelOperatorException : InvalidOperationException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public NotAChannelOperatorException() :
+            base("Only a channel operator can perform that action") { }
+    }
+
+    [Serializable]
+    public class NotAnIRCOperatorException : InvalidOperationException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public NotAnIRCOperatorException() :
+            base("Only an IRC Operator can perform that action") { }
+    }
+
+    [Serializable]
+    public class NotOnChannelException : InvalidOperationException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public NotOnChannelException() :
+            base("Cannot perform the action without being on the channel") { }        
+    }
+
+    [Serializable]
+    public class UserAlreadyAuthenticatedException : InvalidOperationException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public UserAlreadyAuthenticatedException() :
+            base("The user is already authenticated") { }
+            
     }
 }
