@@ -21,6 +21,7 @@ using System.Text;
 using IRCServiceNET.Helpers;
 using IRCServiceNET.Plugins;
 using IRCServiceNET.Actions;
+using System.Net;
 
 namespace IRCServiceNET.Entities
 {
@@ -400,6 +401,18 @@ namespace IRCServiceNET.Entities
                     return channels[name];
                 }
                 return null;
+            }
+        }
+        /// <summary>
+        /// Counts the users with the specified IP address
+        /// </summary>
+        /// <param name="IP"></param>
+        /// <returns></returns>
+        public int CountUsers(IPAddress IP)
+        {
+            lock (lockObject)
+            {
+                return users.Count(p => p.Value.IP == IP);
             }
         }
 #endregion

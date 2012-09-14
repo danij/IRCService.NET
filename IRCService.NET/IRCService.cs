@@ -1017,6 +1017,20 @@ namespace IRCServiceNET
             }
         }
         /// <summary>
+        /// Counts all the users with the specified IP address
+        /// </summary>
+        /// <param name="IP"></param>
+        /// <returns></returns>
+        public int CountUsers(IPAddress IP)
+        {
+            int result = 0;
+            foreach (var item in servers)
+            {
+                result += item.Value.CountUsers(IP);
+            }
+            return result;
+        }
+        /// <summary>
         /// Logs a new event
         /// </summary>
         /// <param name="data"></param>
