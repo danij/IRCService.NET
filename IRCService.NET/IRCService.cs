@@ -119,6 +119,11 @@ namespace IRCServiceNET
         {
             lock (lockObject)
             {
+                var socket = ar.AsyncState as Socket;
+                if (socket != this.socket)
+                {
+                    return;
+                }
                 try
                 {
                     socket.EndConnect(ar);
@@ -949,7 +954,7 @@ namespace IRCServiceNET
             {
                 return servers.Keys.Contains(numeric);
             }
-        }
+        }        
         /// <summary>
         /// Returns all the users from a channel
         /// </summary>
