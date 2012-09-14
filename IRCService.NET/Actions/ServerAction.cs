@@ -47,10 +47,6 @@ namespace IRCServiceNET.Actions
         /// <returns>TRUE if the message is successfully sent</returns>
         public bool SendPrivateMessage(IUser user, string message)
         {
-            if (user == null)
-            {
-                return false;
-            }
             var command = 
                 Plugin.Service.CommandFactory.CreateSendMessageCommand();
             command.From = Server;
@@ -68,10 +64,6 @@ namespace IRCServiceNET.Actions
         /// <returns>TRUE if the notice is successfully sent</returns>
         public bool SendNotice(IUser user, string message)
         {
-            if (user == null)
-            {
-                return false;
-            }
             var command =
                 Plugin.Service.CommandFactory.CreateSendMessageCommand();
             command.From = Server;
@@ -89,14 +81,10 @@ namespace IRCServiceNET.Actions
         /// <param name="login"></param>
         /// <returns>TRUE if the login is successfull</returns>
         public bool LoginUser(IUser toLogIn, string login)
-        {
-            if (toLogIn == null)
-            {
-                return false;
-            }
+        {            
             if (toLogIn.Login.Length > 0)
             {
-                return false;
+                throw new UserAlreadyAuthenticatedException();
             }
             var command =
                 Plugin.Service.CommandFactory.CreateAuthenticateUserCommand();
@@ -107,6 +95,5 @@ namespace IRCServiceNET.Actions
             Plugin.Service.SendCommand(command);
             return true;
         }
-
     }
 }
