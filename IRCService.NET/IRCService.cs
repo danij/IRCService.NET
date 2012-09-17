@@ -1187,7 +1187,7 @@ namespace IRCServiceNET
         /// <param name="op"></param>
         /// <param name="voice"></param>
         /// <param name="halfop"></param>
-        public virtual void AddtoBurst(User user, string channel, 
+        public virtual void AddtoBurst(IUser user, string channel, 
             bool op, bool voice, bool halfop)
         {
             lock (lockObject)
