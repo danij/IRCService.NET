@@ -51,7 +51,7 @@ namespace IRCServiceNET.Actions
         /// <returns></returns>
         private bool RemoteUsersOnChannel(string channel)
         {
-            foreach (var item in Plugin.Servers)
+            foreach (var item in Plugin.Service.Servers)
             {
                 if (item.GetChannel(channel) != null)
                 {
