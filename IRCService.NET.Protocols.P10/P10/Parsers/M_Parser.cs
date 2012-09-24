@@ -178,7 +178,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                     case 'p': mode = ChannelModes.p; break;
                                     case 's': mode = ChannelModes.s; break;
                                     case 'm': mode = ChannelModes.m; break;
-                                    case 'o': mode = ChannelModes.O; break;
+                                    case 'O': mode = ChannelModes.O; break;
                                     case 'c': mode = ChannelModes.c; break;
                                     case 'C': mode = ChannelModes.C; break;
                                 }
