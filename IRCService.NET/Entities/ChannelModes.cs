@@ -35,6 +35,7 @@ namespace IRCServiceNET.Entities
         k = 64,
         l = 128,
         r = 256,
-        O = 512
+        O = 512,
+        c = 1024
     }
 }
