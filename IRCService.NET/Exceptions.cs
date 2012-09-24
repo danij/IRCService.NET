@@ -159,4 +159,24 @@ namespace IRCServiceNET
         public BannedFromChannelException() :
             base("The user is banned from that channel") { }
     }
+
+    [Serializable]
+    public class CannotUseColorsOnChannelException : InvalidOperationException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public CannotUseColorsOnChannelException() :
+            base("Colors are not allowed on that channel") { }
+    }
+
+    [Serializable]
+    public class CannotSendCTCPToChannelException : InvalidOperationException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public CannotSendCTCPToChannelException() :
+            base("CTCPs or not allowed on that channel") { }
+    }
 }

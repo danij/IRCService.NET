@@ -337,8 +337,8 @@ namespace IRCServiceNET.Actions
                 {
                     throw new InvalidChannelException();
                 }
-                if ((channel.GetMode(ChannelModes.n) || 
-                    channel.GetMode(ChannelModes.m)) 
+                if ((channel.GetMode(ChannelModes.n) ||
+                    channel.GetMode(ChannelModes.m))
                     && ! User.IsOnChannel(to))
                 {
                     throw new NotOnChannelException();
@@ -350,6 +350,20 @@ namespace IRCServiceNET.Actions
                     {
                         throw new ChannelModeratedException();
                     }
+                }
+
+                if (message.Contains(IRCConstants.COLOR))
+                {
+                    if (channel.GetMode(ChannelModes.c))
+                    {
+                        throw new CannotUseColorsOnChannelException();
+                    }
+                }
+
+                if ((message[0] == IRCConstants.CTCP) &&
+                    channel.GetMode(ChannelModes.C))
+                {
+                    throw new CannotSendCTCPToChannelException();
                 }
             }
 
@@ -413,7 +427,14 @@ namespace IRCServiceNET.Actions
                         throw new ChannelModeratedException();
                     }
                 }
-            }
+                if (message.Contains(IRCConstants.COLOR))
+                {
+                    if (channel.GetMode(ChannelModes.c))
+                    {
+                        throw new CannotUseColorsOnChannelException();
+                    }
+                }
+            }            
 
             Plugin.Service.SendActionToPlugins(
                 p => p.OnChannelNotice(User, to, message)
