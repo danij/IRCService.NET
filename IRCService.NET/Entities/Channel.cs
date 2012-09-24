@@ -174,7 +174,7 @@ namespace IRCServiceNET.Entities
         {
             lock (lockObject)
             {
-                return (modes >> MathHelper.Log((int)mode) & 1) == 1;
+                return (modes & (int)mode) > 0;
             }
         }
         /// <summary>
@@ -192,10 +192,7 @@ namespace IRCServiceNET.Entities
                 }
                 else
                 {
-                    if ((modes >> MathHelper.Log((int)mode) & 1) == 1)
-                    {
-                        modes = modes ^ (int)mode;
-                    }
+                    modes = modes & (~(int)mode);
                 }
             }
         }
