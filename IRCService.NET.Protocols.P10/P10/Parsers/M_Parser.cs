@@ -165,6 +165,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                         case 'm':
                         case 'O':
                         case 'c':
+                        case 'C':
                             foreach (var item in channelList)
                             {
                                 ChannelModes mode = ChannelModes.n;
@@ -179,6 +180,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                     case 'm': mode = ChannelModes.m; break;
                                     case 'o': mode = ChannelModes.O; break;
                                     case 'c': mode = ChannelModes.c; break;
+                                    case 'C': mode = ChannelModes.C; break;
                                 }
                                 (item as Channel).SetMode(mode, change);
                             }
