@@ -122,6 +122,24 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                             item.SetMode(ChannelModes.m, false);
                         }
                         break;
+                    case 'O':
+                        foreach (Channel item in channelList)
+                        {
+                            item.SetMode(ChannelModes.O, false);
+                        }
+                        break;
+                    case 'c':
+                        foreach (Channel item in channelList)
+                        {
+                            item.SetMode(ChannelModes.c, false);
+                        }
+                        break;
+                    case 'C':
+                        foreach (Channel item in channelList)
+                        {
+                            item.SetMode(ChannelModes.C, false);
+                        }
+                        break;
                     case 'l':
                         foreach (Channel item in channelList)
                         {
