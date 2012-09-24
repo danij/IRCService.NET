@@ -29,4 +29,26 @@ namespace IRCServiceNET
         public const char REVERSE = (char)0x16;
         public const char UNDERLINE = (char)0x1F;
     }
+    /// <summary>
+    /// 4-bit IRC Colors
+    /// </summary>
+    public enum IRCColor
+    {
+        White = 0,
+        Black = 1,
+        Blue = 2,
+        Green = 3,
+        Red = 4,
+        Brown = 5,
+        Violet = 6,
+        Orange = 7,
+        Yellow = 8,
+        LightGreen = 9,
+        Teal = 10,
+        Aqua = 11,
+        LighBlue = 12,
+        Pink = 13,
+        DarkGrey = 14,
+        LightGrey = 15
+    }
 }
