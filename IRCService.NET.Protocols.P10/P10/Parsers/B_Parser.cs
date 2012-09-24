@@ -178,14 +178,17 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                     {
                         serverChannel.CreationTimeStamp = creationTimestamp;
                     }
-                    serverChannel.SetMode(channelModes);
-                    if (limit > 0)
+                    if (channelModes > 0)
                     {
-                        serverChannel.SetMode(ChannelModes.l, limit);
-                    }
-                    if (key.Length > 0)
-                    {
-                        serverChannel.SetMode(ChannelModes.k, key);
+                        serverChannel.SetMode(channelModes);
+                        if (limit > 0)
+                        {
+                            serverChannel.SetMode(ChannelModes.l, limit);
+                        }
+                        if (key.Length > 0)
+                        {
+                            serverChannel.SetMode(ChannelModes.k, key);
+                        }
                     }
                     if (bans.Count > 0)
                     {
