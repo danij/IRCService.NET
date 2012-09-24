@@ -569,6 +569,16 @@ namespace IRCServiceNET.Actions
                             throw new BannedFromChannelException();
                         }
                     }
+                    if (channel.GetMode(ChannelModes.r) && 
+                        String.IsNullOrEmpty(User.Login))
+                    {
+                        throw new NotAuthenticatedException();
+                    }
+                    if (channel.GetMode(ChannelModes.O) &&
+                        ! User.IsOper)
+                    {
+                        throw new NotAnIRCOperatorException();
+                    }
                 }
 
                 var joinCommand = 

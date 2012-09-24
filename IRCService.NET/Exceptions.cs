@@ -100,6 +100,16 @@ namespace IRCServiceNET
     }
 
     [Serializable]
+    public class NotAuthenticatedException : InvalidOperationException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public NotAuthenticatedException() :
+            base("Only an authenticated user can perform that action") { }
+    }
+
+    [Serializable]
     public class NotOnChannelException : InvalidOperationException
     {
         /// <summary>
