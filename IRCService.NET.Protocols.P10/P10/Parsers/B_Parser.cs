@@ -63,6 +63,9 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                         case 's': channelModes |= (int)ChannelModes.s; break;
                         case 'p': channelModes |= (int)ChannelModes.p; break;
                         case 'r': channelModes |= (int)ChannelModes.r; break;
+                        case 'O': channelModes |= (int)ChannelModes.O; break;
+                        case 'c': channelModes |= (int)ChannelModes.c; break;
+                        case 'C': channelModes |= (int)ChannelModes.C; break;
                         case 'k': channelModes |= (int)ChannelModes.k;
                             if (spaceSplit.Count() > (userIndex + 1))
                             {
