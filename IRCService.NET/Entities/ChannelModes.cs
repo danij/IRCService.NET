@@ -26,17 +26,53 @@ namespace IRCServiceNET.Entities
     /// </summary>
     public enum ChannelModes
     {
+        /// <summary>
+        /// No external messages
+        /// </summary>
         n = 1,
+        /// <summary>
+        /// Only operators can change the topic
+        /// </summary>
         t = 2,
+        /// <summary>
+        /// Secret
+        /// </summary>
         s = 4,
+        /// <summary>
+        /// Invite only
+        /// </summary>
         i = 8,
+        /// <summary>
+        /// Moderated
+        /// </summary>
         m = 16,
+        /// <summary>
+        /// Private
+        /// </summary>
         p = 32,
+        /// <summary>
+        /// Key
+        /// </summary>
         k = 64,
+        /// <summary>
+        /// User limit
+        /// </summary>
         l = 128,
+        /// <summary>
+        /// Only registered users can join the channel
+        /// </summary>
         r = 256,
+        /// <summary>
+        /// Only irc operators can join the channel
+        /// </summary>
         O = 512,
+        /// <summary>
+        /// Colors are not allowed
+        /// </summary>
         c = 1024,
+        /// <summary>
+        /// CTCP is not allowed
+        /// </summary>
         C = 2048
     }
 }
