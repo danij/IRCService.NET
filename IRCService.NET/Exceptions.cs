@@ -151,6 +151,16 @@ namespace IRCServiceNET
     }
 
     [Serializable]
+    public class CannotKickServiceException : InvalidOperationException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public CannotKickServiceException() :
+            base("Cannot kick a channel service from a channel") { }
+    }
+
+    [Serializable]
     public class NoMessageException : ArgumentException
     {
         /// <summary>

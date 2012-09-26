@@ -664,6 +664,10 @@ namespace IRCServiceNET.Actions
             {
                 throw new ArgumentNullException("user");
             }
+            if (user.IsService)
+            {
+                throw new CannotKickServiceException();
+            }
             ChannelEntry currentEntry = User.GetChannelEntry(channel);
             if (currentEntry == null)
             {
