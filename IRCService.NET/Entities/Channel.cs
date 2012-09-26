@@ -221,6 +221,10 @@ namespace IRCServiceNET.Entities
                 {
                     case ChannelModes.k:
                         Key = parameter;
+                        if (String.IsNullOrEmpty(Key))
+                        {
+                            SetMode(mode, false);
+                        }
                         break;
                 }
             }
