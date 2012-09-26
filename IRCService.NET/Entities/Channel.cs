@@ -33,10 +33,6 @@ namespace IRCServiceNET.Entities
         /// </summary>
         private int modes;
         /// <summary>
-        /// Channel limit
-        /// </summary>
-        private int limit;
-        /// <summary>
         /// Users on the channel
         /// </summary>
         private List<ChannelEntry> users;
@@ -65,7 +61,7 @@ namespace IRCServiceNET.Entities
             Name = name;
             Key = "";
             modes = 0;
-            limit = 0;
+            Limit = 0;
             creationTimestamp = creationTimeStamp;
             users = new List<ChannelEntry>();
             bans = new List<Ban>();
@@ -108,6 +104,10 @@ namespace IRCServiceNET.Entities
         /// Gets the channel's access key
         /// </summary>
         public string Key { get; protected set; }
+        /// <summary>
+        /// Gets the channel's limit
+        /// </summary>
+        public int Limit { get; protected set; }
         /// <summary>
         /// Counts the users in the channel
         /// </summary>
@@ -238,7 +238,12 @@ namespace IRCServiceNET.Entities
                 switch (mode)
                 {
                     case ChannelModes.l:
-                        limit = parameter;
+                        if (parameter < 1)
+                        {
+                            parameter = 0;
+                            SetMode(mode, false);
+                        }
+                        Limit = parameter;
                         break;
                 }
             }
@@ -252,7 +257,7 @@ namespace IRCServiceNET.Entities
             {
                 modes = 0;
                 Key = "";
-                limit = 0;
+                Limit = 0;
             }
         }
         /// <summary>

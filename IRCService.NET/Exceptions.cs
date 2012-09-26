@@ -141,6 +141,16 @@ namespace IRCServiceNET
     }
 
     [Serializable]
+    public class ChannelLimitException : InvalidOperationException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public ChannelLimitException() :
+            base("The maximum number of users is already on that channel") { }
+    }
+
+    [Serializable]
     public class NoMessageException : ArgumentException
     {
         /// <summary>

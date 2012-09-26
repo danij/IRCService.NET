@@ -45,6 +45,10 @@ namespace IRCServiceNET.Entities
         /// </summary>
         string Key { get; }
         /// <summary>
+        /// Gets the channel's limit
+        /// </summary>
+        int Limit { get; }
+        /// <summary>
         /// Counts the users in the channel
         /// </summary>
         int UserCount { get; }

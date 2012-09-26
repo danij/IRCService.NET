@@ -584,6 +584,22 @@ namespace IRCServiceNET.Actions
                         channel.Key != key)
                     {
                         throw new InvalidChannelKeyException();
+                    }                    
+                    if (channel.GetMode(ChannelModes.l) && channel.Limit > 0)
+                    {
+                        int currentUsersOnChannel = 0;
+                        foreach (var item in Plugin.Service.Servers)
+                        {
+                            var serverChannel = item.GetChannel(channel.Name);
+                            if (serverChannel != null)
+                            {
+                                currentUsersOnChannel += serverChannel.UserCount;
+                                if (currentUsersOnChannel >= channel.Limit)
+                                {
+                                    throw new ChannelLimitException();
+                                }
+                            }
+                        }
                     }
                 }
 
