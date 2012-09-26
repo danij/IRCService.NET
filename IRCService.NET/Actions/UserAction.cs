@@ -542,7 +542,8 @@ namespace IRCServiceNET.Actions
         /// <param name="channelName">The channel to join</param>
         /// <param name="op">Get OP on the channel?</param>
         /// <returns>TRUE if the channel is successfully joined</returns>
-        public bool JoinChannel(string channelName, bool op = false)
+        public bool JoinChannel(string channelName, string key = "",
+            bool op = false)
         {
             if (channelName.Length < 2 || channelName[0] != '#')
             {
@@ -578,6 +579,11 @@ namespace IRCServiceNET.Actions
                         ! User.IsOper)
                     {
                         throw new NotAnIRCOperatorException();
+                    }
+                    if (channel.GetMode(ChannelModes.k) &&
+                        channel.Key != key)
+                    {
+                        throw new InvalidChannelKeyException();
                     }
                 }
 

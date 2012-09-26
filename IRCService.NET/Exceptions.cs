@@ -161,6 +161,16 @@ namespace IRCServiceNET
     }
 
     [Serializable]
+    public class InvalidChannelKeyException : ArgumentException
+    {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public InvalidChannelKeyException() :
+            base("The specified key does not match the channel's key") { }
+    }
+
+    [Serializable]
     public class BannedFromChannelException : ArgumentException
     {
         /// <summary>
