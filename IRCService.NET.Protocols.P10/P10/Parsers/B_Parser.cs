@@ -42,6 +42,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
             }
 
             string channelName = spaceSplit[2];
+            Channel channel = null;
             UnixTimestamp creationTimestamp = 
                 new UnixTimestamp(Convert.ToInt32(spaceSplit[3]));
             int userIndex = 4;
@@ -136,20 +137,23 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                             return;
                         }
 
-                        var channel = channelUser.Server.GetChannel(channelName);
+                        channel = Service.GetChannel(channelName) as Channel;
                         if (channel == null)
                         {
-                            channel = (channelUser.Server as Server).CreateChannel(
-                                channelName, 
-                                creationTimestamp
-                            );
-                            (channelUser.Server as Server).AddChannel(channel);
+                            channel = Service.CreateChannel(channelName, 
+                                creationTimestamp) as Channel;
                         }
                         else
                         {
-                            (channel as Channel).CreationTimeStamp = creationTimestamp;
+                            channel.CreationTimeStamp = creationTimestamp;
                         }
-                        (channel as Channel).AddUser(channelUser, Op, Voice, HalfOp);
+
+                        if (channelUser.Server.GetChannel(channelName) == null)
+                        {
+                            (channelUser.Server as Server).AddChannel(channel);
+                        }
+
+                        channel.AddUser(channelUser, Op, Voice, HalfOp);
                     }
                 }
             }
@@ -168,33 +172,35 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 }
             }
 
-            foreach (var item in Service.Servers)
+            if (channel == null)
             {
-                var serverChannel = item.GetChannel(channelName) as Channel;
-                if (serverChannel != null)
+                channel = Service.GetChannel(channelName) as Channel;
+                if (channel == null)
                 {
-                    if (serverChannel.CreationTimeStamp.Timestamp > 
-                        creationTimestamp.Timestamp)
-                    {
-                        serverChannel.CreationTimeStamp = creationTimestamp;
-                    }
-                    if (channelModes > 0)
-                    {
-                        serverChannel.SetMode(channelModes);
-                        if (limit > 0)
-                        {
-                            serverChannel.SetMode(ChannelModes.l, limit);
-                        }
-                        if (key.Length > 0)
-                        {
-                            serverChannel.SetMode(ChannelModes.k, key);
-                        }
-                    }
-                    if (bans.Count > 0)
-                    {
-                        serverChannel.AddBan(bans);
-                    }
+                    return;
                 }
+            }
+
+            if (channel.CreationTimeStamp.Timestamp > 
+                creationTimestamp.Timestamp)
+            {
+                channel.CreationTimeStamp = creationTimestamp;
+            }
+            if (channelModes > 0)
+            {
+                channel.SetMode(channelModes);
+                if (limit > 0)
+                {
+                    channel.SetMode(ChannelModes.l, limit);
+                }
+                if (key.Length > 0)
+                {
+                    channel.SetMode(ChannelModes.k, key);
+                }
+            }
+            if (bans.Count > 0)
+            {
+                channel.AddBan(bans);
             }
         }
     }

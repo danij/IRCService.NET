@@ -27,11 +27,11 @@ namespace IRCServiceNET.Entities
     /// A generic IRC Channel that contains the users from one server
     /// </summary>
     public interface IChannel
-    {        
+    {
         /// <summary>
-        /// Gets the server that owns the channel
+        /// Gets the service that owns the channel
         /// </summary>
-        IServer Server { get; }
+        IRCService Service { get; }
         /// <summary>
         /// Gets or sets the channel's creation timestamp
         /// </summary>

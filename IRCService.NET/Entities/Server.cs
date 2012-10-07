@@ -86,8 +86,8 @@ namespace IRCServiceNET.Entities
             UpLink = upLink;
             IsControlled = controlled;
             users = new Dictionary<string, IUser>();
-            channels = 
-                new Dictionary<string, IChannel>(StringComparer.OrdinalIgnoreCase);
+            channels = new Dictionary<string, IChannel>(StringComparer.CurrentCultureIgnoreCase);
+            ChannelEntries = new Dictionary<IChannel, IEnumerable<ChannelEntry>>();
         }
 
 #region Properties
@@ -190,19 +190,9 @@ namespace IRCServiceNET.Entities
             }
         }
         /// <summary>
-        /// Gets all the channels on the server
+        /// Gets the channels and channel entries on the server
         /// </summary>
-        /// <returns></returns>
-        public IEnumerable<IChannel> Channels
-        {
-            get
-            {
-                lock (lockObject)
-                {
-                    return channels.Values;
-                }
-            }
-        }
+        public IDictionary<IChannel, IEnumerable<ChannelEntry>> ChannelEntries { get; set; }
         /// <summary>
         /// Gets a ServerAction instance or null if the server is not 
         /// owned by a plugin
@@ -261,16 +251,68 @@ namespace IRCServiceNET.Entities
                 {
                     return false;
                 }
-                var userChannels = channels.Values.ToArray();
-                foreach (var item in userChannels)
+
+                foreach (var pair in ChannelEntries.ToArray())
                 {
-                    (item as Channel).RemoveUser(user, true);
-                    if (item.UserCount < 1)
+                    if (user.IsOnChannel(pair.Key.Name))
                     {
-                        RemoveChannel(item);
+                        var list = pair.Value as List<ChannelEntry>;
+                        for (int i = 0; i < list.Count; i++)
+                        {
+                            if (list[i].User == user)
+                            {
+                                (user as User).OnRemoveFromChannel(pair.Key);
+                                list.RemoveAt(i);
+                                break;
+                            }
+                        }
+                        if (list.Count < 1)
+                        {
+                            ChannelEntries.Remove(pair.Key);
+                            channels.Remove(pair.Key.Name);
+                        }
                     }
                 }
+                
                 return true;
+            }
+        }
+        /// <summary>
+        /// Removes a user from a channel
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="channel"></param>
+        /// <returns></returns>
+        public bool RemoveUser(IUser user, IChannel channel)
+        {
+            lock (lockObject)
+            {
+                if (ChannelEntries.ContainsKey(channel))
+                {
+                    return false;
+                }
+
+                bool found = false;
+
+                var list = ChannelEntries[channel] as List<ChannelEntry>;
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (list[i].User == user)
+                    {
+                        (user as User).OnRemoveFromChannel(channel);
+                        list.RemoveAt(i);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (list.Count < 1)
+                {
+                    ChannelEntries.Remove(channel);
+                    channels.Remove(channel.Name);
+                }
+
+                return found;
             }
         }
         /// <summary>
@@ -344,21 +386,6 @@ namespace IRCServiceNET.Entities
             return GetUserByNick(nick) != null;
         }
         /// <summary>
-        /// Creates a new channel on the server
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="creationTimeStamp"></param>
-        /// <returns></returns>
-        public IChannel CreateChannel(string name, 
-            UnixTimestamp creationTimeStamp = null)
-        {
-            if (creationTimeStamp == null)
-            {
-                creationTimeStamp = UnixTimestamp.CurrentTimestamp();
-            }
-            return new Channel(this, name, creationTimeStamp);
-        }
-        /// <summary>
         /// Adds a new channel to the server
         /// </summary>
         /// <param name="channel"></param>
@@ -367,24 +394,14 @@ namespace IRCServiceNET.Entities
         {
             lock (lockObject)
             {
-                if (channels.Keys.Contains(channel.Name))
+                if (ChannelEntries.ContainsKey(channel) || 
+                    channels.ContainsKey(channel.Name))
                 {
                     return false;
                 }
+                ChannelEntries.Add(channel, new List<ChannelEntry>());
                 channels.Add(channel.Name, channel);
                 return true;
-            }
-        }
-        /// <summary>
-        /// Removes a channel
-        /// </summary>
-        /// <param name="channel"></param>
-        /// <returns>TRUE if the Channel is successfully removed</returns>
-        public bool RemoveChannel(IChannel channel)
-        {
-            lock (lockObject)
-            {
-                return channels.Remove(channel.Name);
             }
         }
         /// <summary>
@@ -396,7 +413,7 @@ namespace IRCServiceNET.Entities
         {
             lock (lockObject)
             {
-                if (channels.Keys.Contains(name))
+                if (channels.ContainsKey(name))
                 {
                     return channels[name];
                 }

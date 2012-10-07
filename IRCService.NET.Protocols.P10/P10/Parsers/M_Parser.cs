@@ -131,17 +131,16 @@ namespace IRCServiceNET.Protocols.P10.Parsers
             }
             else
             {
-                var channelList = new List<IChannel>();
-                IChannel channelToAdd;
+                Channel channel = null;
                 foreach (var item in Service.Servers)
                 {
-                    channelToAdd = item.GetChannel(spaceSplit[2]);
-                    if (channelToAdd != null)
+                    channel = item.GetChannel(spaceSplit[2]) as Channel;
+                    if (channel != null)
                     {
-                        channelList.Add(channelToAdd);
+                        break;
                     }
                 }
-                if (channelList.Count < 1)
+                if (channel == null)
                 {
                     Service.AddLog("Channel " + spaceSplit[2] + " was not found");
                     return;
@@ -166,24 +165,22 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                         case 'O':
                         case 'c':
                         case 'C':
-                            foreach (var item in channelList)
+                            ChannelModes mode = ChannelModes.n;
+                            switch (spaceSplit[3][i])
                             {
-                                ChannelModes mode = ChannelModes.n;
-                                switch (spaceSplit[3][i])
-                                {
-                                    case 'n': mode = ChannelModes.n; break;
-                                    case 't': mode = ChannelModes.t; break;
-                                    case 'i': mode = ChannelModes.i; break;
-                                    case 'r': mode = ChannelModes.r; break;
-                                    case 'p': mode = ChannelModes.p; break;
-                                    case 's': mode = ChannelModes.s; break;
-                                    case 'm': mode = ChannelModes.m; break;
-                                    case 'O': mode = ChannelModes.O; break;
-                                    case 'c': mode = ChannelModes.c; break;
-                                    case 'C': mode = ChannelModes.C; break;
-                                }
-                                (item as Channel).SetMode(mode, change);
+                                case 'n': mode = ChannelModes.n; break;
+                                case 't': mode = ChannelModes.t; break;
+                                case 'i': mode = ChannelModes.i; break;
+                                case 'r': mode = ChannelModes.r; break;
+                                case 'p': mode = ChannelModes.p; break;
+                                case 's': mode = ChannelModes.s; break;
+                                case 'm': mode = ChannelModes.m; break;
+                                case 'O': mode = ChannelModes.O; break;
+                                case 'c': mode = ChannelModes.c; break;
+                                case 'C': mode = ChannelModes.C; break;
                             }
+                            channel.SetMode(mode, change);
+
                             foreach (var item in Service.Plugins)
                             {
                                 if (from != null)
@@ -222,18 +219,12 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                 {
                                     limit = Convert.ToInt32(spaceSplit[crIndex]);
                                     crIndex += 1;
-                                    foreach (Channel item in channelList)
-                                    {
-                                        item.SetMode(ChannelModes.l, limit);
-                                    }
+                                    channel.SetMode(ChannelModes.l, limit);
                                 }
                             }
                             else
                             {
-                                foreach (Channel item in channelList)
-                                {
-                                    item.SetMode(ChannelModes.l, 0);
-                                }
+                                channel.SetMode(ChannelModes.l, 0);
                             }
                             foreach (var item in Service.Plugins)
                             {
@@ -271,18 +262,12 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                 {
                                     key = spaceSplit[crIndex];
                                     crIndex += 1;
-                                    foreach (Channel item in channelList)
-                                    {
-                                        item.SetMode(ChannelModes.k, key);
-                                    }
+                                    channel.SetMode(ChannelModes.k, key);
                                 }
                             }
                             else
                             {
-                                foreach (Channel item in channelList)
-                                {
-                                    item.SetMode(ChannelModes.k, "");
-                                }
+                                channel.SetMode(ChannelModes.k, "");
                             }
                             foreach (var item in Service.Plugins)
                             {
@@ -318,17 +303,16 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                 string ban = spaceSplit[crIndex];
                                 crIndex += 1;
                                 Ban newBan = new Ban(ban);
-                                foreach (Channel item in channelList)
+                                
+                                if (change == true)
                                 {
-                                    if (change == true)
-                                    {
-                                        item.AddBan(newBan);
-                                    }
-                                    else
-                                    {
-                                        item.RemoveBans(newBan);
-                                    }
+                                    channel.AddBan(newBan);
                                 }
+                                else
+                                {
+                                    channel.RemoveBans(newBan);
+                                }
+
                                 foreach (var item in Service.Plugins)
                                 {
                                     if (from != null)
@@ -394,17 +378,24 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                 continue;
                             }
                             crIndex++;
-                            IChannel userChannel = 
-                                userAffected.Server.GetChannel(spaceSplit[2]);
-                            if (userChannel == null)
+                            if ( ! userAffected.Server.ChannelEntries.ContainsKey(
+                                channel))
                             {
                                 Service.AddLog("Channel " + spaceSplit[2] +
                                     " does not exist on " + 
                                     userAffected.Server.Name);
                                 continue;
                             }
-                            ChannelEntry userEntry = 
-                                userChannel.GetEntry(userAffected);
+                            var entries = 
+                                userAffected.Server.ChannelEntries[channel];
+                            ChannelEntry userEntry = null;
+                            foreach (var item in entries)
+                            {
+                                if (item.User == userAffected)
+                                {
+                                    userEntry = item;
+                                }
+                            }
                             if (userEntry == null)
                             {
                                 Service.AddLog("User " + userAffected.Nick +

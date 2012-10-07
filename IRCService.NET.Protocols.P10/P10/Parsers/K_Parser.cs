@@ -82,7 +82,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                     kickedUser.Server.Name);
                 return;
             }
-            if ( ! (channel as Channel).RemoveUser(kickedUser))
+            if ( ! (kickedUser.Server as Server).RemoveUser(kickedUser, channel))
             {
                 Service.AddLog(kickedUser.Nick + " was not on " + spaceSplit[2]);
                 return;

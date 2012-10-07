@@ -61,17 +61,17 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 }
             }
 
-            var channelList = new List<IChannel>();
-            IChannel channelToAdd;
+            Channel channel = null;
+
             foreach (var item in Service.Servers)
             {
-                channelToAdd = item.GetChannel(spaceSplit[2]);
-                if (channelToAdd != null)
+                channel = item.GetChannel(spaceSplit[2]) as Channel;
+                if (channel != null)
                 {
-                    channelList.Add(channelToAdd);
+                    break;
                 }
             }
-            if (channelList.Count < 1)
+            if (channel == null)
             {
                 Service.AddLog("Channel " + spaceSplit[2] + " was not found");
                 return;
@@ -81,100 +81,52 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 switch (spaceSplit[3][i])
                 {
                     case 'n':
-                        foreach (Channel item in channelList)
-                        {
-                            item.SetMode(ChannelModes.n, false);
-                        }
+                        channel.SetMode(ChannelModes.n, false);
                         break;
                     case 't':
-                        foreach (Channel item in channelList)
-                        {
-                            item.SetMode(ChannelModes.t, false);
-                        }
+                        channel.SetMode(ChannelModes.t, false);
                         break;
                     case 'i':
-                        foreach (Channel item in channelList)
-                        {
-                            item.SetMode(ChannelModes.i, false);
-                        }
+                        channel.SetMode(ChannelModes.i, false);
                         break;
                     case 'r':
-                        foreach (Channel item in channelList)
-                        {
-                            item.SetMode(ChannelModes.r, false);
-                        }
+                        channel.SetMode(ChannelModes.r, false);
                         break;
                     case 'p':
-                        foreach (Channel item in channelList)
-                        {
-                            item.SetMode(ChannelModes.p, false);
-                        }
+                        channel.SetMode(ChannelModes.p, false);
                         break;
                     case 's':
-                        foreach (Channel item in channelList)
-                        {
-                            item.SetMode(ChannelModes.s, false);
-                        }
+                        channel.SetMode(ChannelModes.s, false);
                         break;
                     case 'm':
-                        foreach (Channel item in channelList)
-                        {
-                            item.SetMode(ChannelModes.m, false);
-                        }
+                        channel.SetMode(ChannelModes.m, false);
                         break;
                     case 'O':
-                        foreach (Channel item in channelList)
-                        {
-                            item.SetMode(ChannelModes.O, false);
-                        }
+                        channel.SetMode(ChannelModes.O, false);
                         break;
                     case 'c':
-                        foreach (Channel item in channelList)
-                        {
-                            item.SetMode(ChannelModes.c, false);
-                        }
+                        channel.SetMode(ChannelModes.c, false);
                         break;
                     case 'C':
-                        foreach (Channel item in channelList)
-                        {
-                            item.SetMode(ChannelModes.C, false);
-                        }
+                        channel.SetMode(ChannelModes.C, false);
                         break;
                     case 'l':
-                        foreach (Channel item in channelList)
-                        {
-                            item.SetMode(ChannelModes.l, 0);
-                        }
+                        channel.SetMode(ChannelModes.l, 0);
                         break;
                     case 'k':
-                        foreach (Channel item in channelList)
-                        {
-                            item.SetMode(ChannelModes.k, "");
-                        }
+                        channel.SetMode(ChannelModes.k, "");
                         break;
                     case 'b':
-                        foreach (Channel item in channelList)
-                        {
-                            item.ClearBans();
-                        }
+                        channel.ClearBans();
                         break;
                     case 'o':
-                        foreach (Channel item in channelList)
-                        {
-                            item.ClearOp();
-                        }
+                        channel.ClearOp();
                         break;
                     case 'v':
-                        foreach (Channel item in channelList)
-                        {
-                            item.ClearVoice();
-                        }
+                        channel.ClearVoice();
                         break;
                     case 'h':
-                        foreach (Channel item in channelList)
-                        {
-                            item.ClearHalfOp();
-                        }
+                        channel.ClearHalfOp();
                         break;
                 }
             }

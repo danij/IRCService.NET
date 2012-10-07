@@ -69,7 +69,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                         " leaves unknown channel " + item);
                     continue;
                 }
-                if ( ! leaveChannel.RemoveUser(user))
+                if ( ! (user.Server as Server).RemoveUser(user, leaveChannel))
                 {
                     Service.AddLog("User " + user.Nick + 
                         " was not present in channel " + item);

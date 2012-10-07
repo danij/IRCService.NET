@@ -84,10 +84,9 @@ namespace IRCServiceNET.Entities
         /// <returns></returns>
         IEnumerable<IUser> Users { get; }
         /// <summary>
-        /// Gets all the channels on the server
+        /// Gets the channels and channel entries on the server
         /// </summary>
-        /// <returns></returns>
-        IEnumerable<IChannel> Channels { get; }
+        IDictionary<IChannel, IEnumerable<ChannelEntry>> ChannelEntries { get; }
         /// <summary>
         /// Gets a ServerAction instance or null if the server is not 
         /// owned by a plugin

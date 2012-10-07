@@ -996,6 +996,17 @@ namespace IRCServiceNET
             }
         }
         /// <summary>
+        /// Creates a new channel and sets this service as a reference
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="creationTimestamp"></param>
+        /// <returns></returns>
+        public IChannel CreateChannel(string name, 
+            UnixTimestamp creationTimestamp = null)
+        {
+            return new Channel(this, name, creationTimestamp);
+        }
+        /// <summary>
         /// Returns a channel from a server that has users on it
         /// </summary>
         /// <param name="channelName"></param>
@@ -1203,7 +1214,7 @@ namespace IRCServiceNET
                 Channel channelToBurst;
                 if ( ! toBurst.ContainsKey(channel))
                 {
-                    channelToBurst = new Channel(null, channel, null);
+                    channelToBurst = CreateChannel(channel) as Channel;
                     toBurst.Add(channel, channelToBurst);
                 }
                 else

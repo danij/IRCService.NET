@@ -57,18 +57,25 @@ namespace IRCServiceNET.Protocols.P10.Parsers
 
             foreach (string item in channels)
             {
-                currentChannel = user.Server.GetChannel(item);
+                currentChannel = Service.GetChannel(item);
                 if (currentChannel == null)
                 {
-                    currentChannel = (user.Server as Server).CreateChannel(item);
-                    (user.Server as Server).AddChannel(currentChannel);
+                    currentChannel = Service.CreateChannel(item);
                     Service.SendActionToPlugins(p => p.OnNewChannel(item));
                 }
-                (currentChannel as Channel).AddUser(user, false, false, false);
-                Service.SendActionToPlugins(
-                    p => p.OnChannelJoin(item, user),
-                    user.Plugin                        
-                );                
+
+                if (user.Server.GetChannel(item) == null)
+                {
+                    (user.Server as Server).AddChannel(currentChannel);
+                }
+
+                if ((currentChannel as Channel).AddUser(user, false, false, false))
+                {
+                    Service.SendActionToPlugins(
+                        p => p.OnChannelJoin(item, user),
+                        user.Plugin
+                    );
+                }
             }
         }
     }
