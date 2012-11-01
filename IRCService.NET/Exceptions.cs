@@ -18,205 +18,273 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace IRCServiceNET
 {
     [Serializable]
     public class UserNotControlledException : Exception
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public UserNotControlledException() : 
-            base("The user is not under your plugin's control") { }
-        /// <summary>
-        /// Custom constructor
-        /// </summary>
-        /// <param name="message"></param>
+        public UserNotControlledException() :
+            base("The user is not under your plugin's control"){ }
         public UserNotControlledException(string message) : base(message) { }
+        public UserNotControlledException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected UserNotControlledException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class NotPreparedForPluginsException : Exception
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public NotPreparedForPluginsException() :
             base("The Service is not prepared for plugins") { }
+        public NotPreparedForPluginsException(string message) : base(message) { }
+        public NotPreparedForPluginsException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected NotPreparedForPluginsException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class CannotRegisterPluginException : Exception
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public CannotRegisterPluginException() :
-            base("You must register a plugin when the service is disconnected")
-        {
-        }
+            base("You must register a plugin when the service is disconnected") { }
+        public CannotRegisterPluginException(string message) : base(message) { }
+        public CannotRegisterPluginException(string message, Exception inner) :
+            base(message, inner) { }
+        protected CannotRegisterPluginException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class BurstCompletedException : Exception
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public BurstCompletedException() :
             base("The Burst has already been completed") { }
+        public BurstCompletedException(string message) : base(message) { }
+        public BurstCompletedException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected BurstCompletedException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class NickExistsException : InvalidOperationException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        /// <param name="nick"></param>
-        public NickExistsException(string nick) :
-            base("The nick " + nick + " already exists on the network") { }
+        public NickExistsException() :
+            base("The nick already exists on the network") { }
+        public NickExistsException(string message) : base(message) { }
+        public NickExistsException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected NickExistsException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class NotAChannelOperatorException : InvalidOperationException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public NotAChannelOperatorException() :
             base("Only a channel operator can perform that action") { }
+        public NotAChannelOperatorException(string message) : base(message) { }
+        public NotAChannelOperatorException(string message, Exception inner) :
+            base(message, inner) { }
+        protected NotAChannelOperatorException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class NotAnIRCOperatorException : InvalidOperationException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public NotAnIRCOperatorException() :
             base("Only an IRC Operator can perform that action") { }
+        public NotAnIRCOperatorException(string message) : base(message) { }
+        public NotAnIRCOperatorException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected NotAnIRCOperatorException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class NotAuthenticatedException : InvalidOperationException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public NotAuthenticatedException() :
             base("Only an authenticated user can perform that action") { }
+        public NotAuthenticatedException(string message) : base(message) { }
+        public NotAuthenticatedException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected NotAuthenticatedException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class NotOnChannelException : InvalidOperationException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public NotOnChannelException() :
-            base("Cannot perform the action without being on the channel") { }        
+            base("Cannot perform the action without being on the channel") { }
+        public NotOnChannelException(string message) : base(message) { }
+        public NotOnChannelException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected NotOnChannelException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class UserAlreadyAuthenticatedException : InvalidOperationException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public UserAlreadyAuthenticatedException() :
             base("The user is already authenticated") { }
-            
+        public UserAlreadyAuthenticatedException(string message) : base(message) { }
+        public UserAlreadyAuthenticatedException(string message, Exception inner) 
+            : base(message, inner) { }
+        protected UserAlreadyAuthenticatedException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class ChannelModeratedException : InvalidOperationException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public ChannelModeratedException() :
             base("At least voice is needed to send messages to a moderated channel") { }
+        public ChannelModeratedException(string message) : base(message) { }
+        public ChannelModeratedException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected ChannelModeratedException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class ChannelLimitException : InvalidOperationException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public ChannelLimitException() :
             base("The maximum number of users is already on that channel") { }
+        public ChannelLimitException(string message) : base(message) { }
+        public ChannelLimitException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected ChannelLimitException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class CannotKickServiceException : InvalidOperationException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public CannotKickServiceException() :
             base("Cannot kick a channel service from a channel") { }
+        public CannotKickServiceException(string message) : base(message) { }
+        public CannotKickServiceException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected CannotKickServiceException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class NoMessageException : ArgumentException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public NoMessageException() :
             base("No message was specified") { }
+        public NoMessageException(string message) : base(message) { }
+        public NoMessageException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected NoMessageException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class InvalidChannelException : ArgumentException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public InvalidChannelException() :
-            base("Invalid channel") { }
+        public InvalidChannelException() : base("Invalid channel") { }
+        public InvalidChannelException(string message) : base(message) { }
+        public InvalidChannelException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected InvalidChannelException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class InvalidChannelKeyException : ArgumentException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public InvalidChannelKeyException() :
             base("The specified key does not match the channel's key") { }
+        public InvalidChannelKeyException(string message) : base(message) { }
+        public InvalidChannelKeyException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected InvalidChannelKeyException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class BannedFromChannelException : ArgumentException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public BannedFromChannelException() :
             base("The user is banned from that channel") { }
+        public BannedFromChannelException(string message) : base(message) { }
+        public BannedFromChannelException(string message, Exception inner) : 
+            base(message, inner) { }
+        protected BannedFromChannelException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class CannotUseColorsOnChannelException : InvalidOperationException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public CannotUseColorsOnChannelException() :
             base("Colors are not allowed on that channel") { }
+        public CannotUseColorsOnChannelException(string message) : base(message) { }
+        public CannotUseColorsOnChannelException(string message, Exception inner) :
+            base(message, inner) { }
+        protected CannotUseColorsOnChannelException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
 
     [Serializable]
     public class CannotSendCTCPToChannelException : InvalidOperationException
     {
-        /// <summary>
-        /// Default constructor
-        /// </summary>
         public CannotSendCTCPToChannelException() :
             base("CTCPs or not allowed on that channel") { }
+        public CannotSendCTCPToChannelException(string message) : base(message) { }
+        public CannotSendCTCPToChannelException(string message, Exception inner) :
+            base(message, inner) { }
+        protected CannotSendCTCPToChannelException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
     }
+
 }

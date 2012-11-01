@@ -235,7 +235,7 @@ namespace IRCServiceNET.Actions
         {
             if (Plugin.Service.NickExists(newNick))
             {
-                throw new NickExistsException(newNick);
+                throw new NickExistsException();
             }
             User.Nick = newNick;
             var command = Plugin.Service.CommandFactory.CreateChangeNickCommand();
