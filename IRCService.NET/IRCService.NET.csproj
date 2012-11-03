@@ -49,6 +49,7 @@
     <Compile Include="Entities\Ban.cs" />
     <Compile Include="Entities\ChannelEntry.cs" />
     <Compile Include="Entities\ChannelModes.cs" />
+    <Compile Include="Entities\ChannelTopic.cs" />
     <Compile Include="Entities\IChannel.cs" />
     <Compile Include="Entities\IHasNumeric.cs" />
     <Compile Include="Actions\UserAction.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocols\AcknowledgeBurstCommand.cs" />
     <Compile Include="Protocols\AuthenticateUserCommand.cs" />
+    <Compile Include="Protocols\ChangeChannelTopicCommand.cs" />
     <Compile Include="Protocols\ChannelBurstCommand.cs" />
     <Compile Include="Protocols\ErrorCommand.cs" />
     <Compile Include="Protocols\IParser.cs" />

@@ -113,6 +113,10 @@ namespace IRCServiceNET.Entities
         /// </summary>
         public int Limit { get; protected set; }
         /// <summary>
+        /// Gets or sets the channels topic
+        /// </summary>
+        public ChannelTopic Topic { get; set; }
+        /// <summary>
         /// Counts the users in the channel
         /// </summary>
         public int UserCount

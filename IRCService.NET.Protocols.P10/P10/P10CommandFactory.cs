@@ -111,5 +111,9 @@ namespace IRCServiceNET.Protocols.P10
         {
             return new P10WallopsCommand();
         }
+        public ChangeChannelTopicCommand CreateChangeChannelTopicCommand()
+        {
+            return new P10ChangeChannelTopicCommand();
+        }
     }
 }

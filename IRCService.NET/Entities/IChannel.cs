@@ -78,5 +78,9 @@ namespace IRCServiceNET.Entities
         /// </summary>
         /// <returns></returns>
         IEnumerable<Ban> Bans { get; }
+        /// <summary>
+        /// Get the channel's topic
+        /// </summary>
+        ChannelTopic Topic { get; }
     }
 }

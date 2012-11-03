@@ -47,6 +47,7 @@
     <Compile Include="P10\P10AcknowledgeBurstCommand.cs" />
     <Compile Include="P10\P10AuthenticateUserCommand.cs" />
     <Compile Include="P10\P10ChangeChannelModeCommand.cs" />
+    <Compile Include="P10\P10ChangeChannelTopicCommand.cs" />
     <Compile Include="P10\P10ChangeNickCommand.cs" />
     <Compile Include="P10\P10ChangeUserModeCommand.cs" />
     <Compile Include="P10\P10ChannelBurstCommand.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="P10\Parsers\SERVER_Parser.cs" />
     <Compile Include="P10\Parsers\SQ_Parser.cs" />
     <Compile Include="P10\Parsers\S_Parser.cs" />
+    <Compile Include="P10\Parsers\T_Parser.cs" />
     <Compile Include="P10\Parsers\WA_Parser.cs" />
     <Compile Include="P10\Parsers\Y_Parser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -48,5 +48,6 @@ namespace IRCServiceNET.Protocols
         UserDisconnectCommand CreateUserDisconnectCommand();
         UserQuitCommand CreateUserQuitCommand();
         WallopsCommand CreateWallopsCommand();
+        ChangeChannelTopicCommand CreateChangeChannelTopicCommand();
     }
 }

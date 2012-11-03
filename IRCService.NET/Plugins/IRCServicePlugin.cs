@@ -766,6 +766,11 @@ namespace IRCServiceNET.Plugins
 
         }
         /// <summary>
+        /// Occurs when a channel topic is changed
+        /// </summary>
+        /// <param name="channel"></param>
+        public virtual void OnChannelTopicChange(IChannel channel) { }
+        /// <summary>
         /// Occurs when a server sends a wallops
         /// </summary>
         /// <param name="from"></param>
