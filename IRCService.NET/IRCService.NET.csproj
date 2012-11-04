@@ -71,6 +71,7 @@
     <Compile Include="Protocols\ChangeChannelTopicCommand.cs" />
     <Compile Include="Protocols\ChannelBurstCommand.cs" />
     <Compile Include="Protocols\ErrorCommand.cs" />
+    <Compile Include="Protocols\InviteUserCommand.cs" />
     <Compile Include="Protocols\IParser.cs" />
     <Compile Include="Protocols\ServerAuthenticationCommand.cs" />
     <Compile Include="Protocols\ChangeChannelModeCommand.cs" />

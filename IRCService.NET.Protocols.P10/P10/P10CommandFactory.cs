@@ -115,5 +115,9 @@ namespace IRCServiceNET.Protocols.P10
         {
             return new P10ChangeChannelTopicCommand();
         }
+        public InviteUserCommand CreateInviteUserCommand()
+        {
+            return new P10InviteUserCommand();
+        }
     }
 }

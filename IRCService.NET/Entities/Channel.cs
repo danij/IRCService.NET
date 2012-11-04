@@ -37,6 +37,10 @@ namespace IRCServiceNET.Entities
         /// </summary>
         private List<Ban> bans;
         /// <summary>
+        /// Users invited to the channel
+        /// </summary>
+        private List<IUser> invitations;
+        /// <summary>
         /// Channel creation timestamp
         /// </summary>
         private UnixTimestamp creationTimestamp;
@@ -63,6 +67,7 @@ namespace IRCServiceNET.Entities
             }
             creationTimestamp = creationTimeStamp;
             bans = new List<Ban>();
+            invitations = new List<IUser>();
         }
 
 #region Properties
@@ -116,6 +121,19 @@ namespace IRCServiceNET.Entities
         /// Gets or sets the channels topic
         /// </summary>
         public ChannelTopic Topic { get; set; }
+        /// <summary>
+        /// Gets the list of users invited to the channel
+        /// </summary>
+        public IEnumerable<IUser> Invitations
+        {
+            get 
+            {
+                lock (lockObject)
+                {
+                    return invitations.ToArray();
+                }
+            }
+        }
         /// <summary>
         /// Counts the users in the channel
         /// </summary>
@@ -304,6 +322,11 @@ namespace IRCServiceNET.Entities
                 var list = user.Server.ChannelEntries[this] as List<ChannelEntry>;
                 list.Add(entry);
                 (user as User).OnAddToChannel(entry);
+
+                if (Service.BurstCompleted)
+                {
+                    RemoveInvitation(user);
+                }
                 return true;
             }
         }
@@ -431,6 +454,50 @@ namespace IRCServiceNET.Entities
                 {
                     item.HalfOp = false;
                 }
+            }
+        }
+        /// <summary>
+        /// Adds an invitation for a user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns>TRUE if the user is on the channel</returns>
+        public bool AddInvitiation(IUser user)
+        {
+            if (user == null || GetEntry(user) != null)
+            {
+                return false;
+            }
+            lock (lockObject)
+            {
+                invitations.Add(user);
+                return true;
+            }
+        }
+        /// <summary>
+        /// Removes an invitation for a user
+        /// </summary>
+        /// <param name="user"></param>
+        public void RemoveInvitation(IUser user)
+        {
+            if (user == null)
+            {
+                return;
+            }
+            lock (lockObject)
+            {
+                invitations.Remove(user);
+            }
+        }
+        /// <summary>
+        /// Checkes if a user is invited to the channel
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public bool IsUserInvited(IUser user)
+        {
+            lock (lockObject)
+            {
+                return invitations.Contains(user);
             }
         }
 #endregion

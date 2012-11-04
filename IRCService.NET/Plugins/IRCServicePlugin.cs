@@ -783,6 +783,13 @@ namespace IRCServiceNET.Plugins
         /// <param name="from"></param>
         /// <param name="message"></param>
         public virtual void OnWallops(IUser from, string message) { }
+        /// <summary>
+        /// Occurs when a user is invited to a channel
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="channel"></param>
+        public virtual void OnUserInvitedToChannel(IUser user, IChannel channel, 
+            IHasNumeric by) { }
     #endregion
 
 #endregion

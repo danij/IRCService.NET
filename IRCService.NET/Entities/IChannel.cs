@@ -82,5 +82,15 @@ namespace IRCServiceNET.Entities
         /// Get the channel's topic
         /// </summary>
         ChannelTopic Topic { get; }
+        /// <summary>
+        /// Gets the list of users invited to the channel
+        /// </summary>
+        IEnumerable<IUser> Invitations { get; }
+        /// <summary>
+        /// Checks if a user is invited to the channel
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        bool IsUserInvited(IUser user);
     }
 }

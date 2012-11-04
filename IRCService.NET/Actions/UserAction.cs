@@ -563,40 +563,44 @@ namespace IRCServiceNET.Actions
             {
                 if ( ! User.IsService)
                 {
-                    foreach (var item in channel.Bans)
+                    var invited = channel.IsUserInvited(User);
+                    if ( ! invited)
                     {
-                        if (item.Match(User))
+                        foreach (var item in channel.Bans)
                         {
-                            throw new BannedFromChannelException();
-                        }
-                    }
-                    if (channel.GetMode(ChannelModes.r) && 
-                        String.IsNullOrEmpty(User.Login))
-                    {
-                        throw new NotAuthenticatedException();
-                    }
-                    if (channel.GetMode(ChannelModes.O) &&
-                        ! User.IsOper)
-                    {
-                        throw new NotAnIRCOperatorException();
-                    }
-                    if (channel.GetMode(ChannelModes.k) &&
-                        channel.Key != key)
-                    {
-                        throw new InvalidChannelKeyException();
-                    }                    
-                    if (channel.GetMode(ChannelModes.l) && channel.Limit > 0)
-                    {
-                        int currentUsersOnChannel = 0;
-                        foreach (var item in Plugin.Service.Servers)
-                        {
-                            var serverChannel = item.GetChannel(channel.Name);
-                            if (serverChannel != null)
+                            if (item.Match(User))
                             {
-                                currentUsersOnChannel += serverChannel.UserCount;
-                                if (currentUsersOnChannel >= channel.Limit)
+                                throw new BannedFromChannelException();
+                            }
+                        }
+                        if (channel.GetMode(ChannelModes.r) &&
+                            String.IsNullOrEmpty(User.Login))
+                        {
+                            throw new NotAuthenticatedException();
+                        }
+                        if (channel.GetMode(ChannelModes.O) &&
+                            !User.IsOper)
+                        {
+                            throw new NotAnIRCOperatorException();
+                        }
+                        if (channel.GetMode(ChannelModes.k) &&
+                            channel.Key != key)
+                        {
+                            throw new InvalidChannelKeyException();
+                        }
+                        if (channel.GetMode(ChannelModes.l) && channel.Limit > 0)
+                        {
+                            int currentUsersOnChannel = 0;
+                            foreach (var item in Plugin.Service.Servers)
+                            {
+                                var serverChannel = item.GetChannel(channel.Name);
+                                if (serverChannel != null)
                                 {
-                                    throw new ChannelLimitException();
+                                    currentUsersOnChannel += serverChannel.UserCount;
+                                    if (currentUsersOnChannel >= channel.Limit)
+                                    {
+                                        throw new ChannelLimitException();
+                                    }
                                 }
                             }
                         }
@@ -779,6 +783,45 @@ namespace IRCServiceNET.Actions
             command.From = User;
             command.Value = value;
 
+            Plugin.Service.SendCommand(command);
+            return true;
+        }
+        /// <summary>
+        /// Invites a user to a channel
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public bool InviteUserToChannel(string channel, IUser user)
+        {
+            if (channel.Length < 2 || channel[0] != '#')
+            {
+                throw new InvalidChannelException();
+            }
+            if (user == null)
+            {
+                throw new ArgumentNullException("user");
+            }
+
+            ChannelEntry currentEntry = User.GetChannelEntry(channel);
+            if (currentEntry == null)
+            {
+                throw new NotOnChannelException();
+            }
+            if ((currentEntry.Op == false) && (currentEntry.HalfOp == false))
+            {
+                throw new NotAChannelOperatorException();
+            }
+            if (user.IsOnChannel(channel))
+            {
+                throw new UserAlreadyOnChannelException();
+            }
+
+            var command =
+                Plugin.Service.CommandFactory.CreateInviteUserCommand();
+            command.From = User;
+            command.User = user;
+            command.Channel = currentEntry.Channel;
             Plugin.Service.SendCommand(command);
             return true;
         }

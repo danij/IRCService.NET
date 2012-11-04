@@ -54,6 +54,7 @@
     <Compile Include="P10\P10CommandFactory.cs" />
     <Compile Include="P10\P10EndOfBurstCommand.cs" />
     <Compile Include="P10\P10ErrorCommand.cs" />
+    <Compile Include="P10\P10InviteUserCommand.cs" />
     <Compile Include="P10\P10JoinChannelCommand.cs" />
     <Compile Include="P10\P10KickUserCommand.cs" />
     <Compile Include="P10\P10NewServerCommand.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="P10\Parsers\EB_Parser.cs" />
     <Compile Include="P10\Parsers\ERROR_Parser.cs" />
     <Compile Include="P10\Parsers\G_Parser.cs" />
+    <Compile Include="P10\Parsers\I_Parser.cs" />
     <Compile Include="P10\Parsers\J_Parser.cs" />
     <Compile Include="P10\Parsers\K_Parser.cs" />
     <Compile Include="P10\Parsers\L_Parser.cs" />

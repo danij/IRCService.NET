@@ -34,6 +34,7 @@ namespace IRCServiceNET.Protocols
         ChannelBurstCommand CreateChannelBurstCommand();
         EndOfBurstCommand CreateEndOfBurstCommand();
         ErrorCommand CreateErrorCommand();
+        InviteUserCommand CreateInviteUserCommand();
         JoinChannelCommand CreateJoinChannelCommand();
         KickUserCommand CreateKickUserCommand();
         NewServerCommand CreateNewServerCommand();

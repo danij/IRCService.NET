@@ -266,6 +266,9 @@ namespace IRCServiceNET.Entities
                                 break;
                             }
                         }
+
+                        (pair.Key as Channel).RemoveInvitation(user);
+
                         if (list.Count < 1)
                         {
                             ChannelEntries.Remove(pair.Key);
@@ -305,6 +308,8 @@ namespace IRCServiceNET.Entities
                         break;
                     }
                 }
+
+                (channel as Channel).RemoveInvitation(user);
 
                 if (list.Count < 1)
                 {

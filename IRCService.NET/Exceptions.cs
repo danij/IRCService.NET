@@ -287,4 +287,17 @@ namespace IRCServiceNET
             : base(info, context) { }
     }
 
+    [Serializable]
+    public class UserAlreadyOnChannelException : InvalidOperationException
+    {
+        public UserAlreadyOnChannelException() :
+            base("The user is already on that channel") { }
+        public UserAlreadyOnChannelException(string message) : base(message) { }
+        public UserAlreadyOnChannelException(string message, Exception inner) : base(message, inner) { }
+        protected UserAlreadyOnChannelException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
+    }
+
 }
