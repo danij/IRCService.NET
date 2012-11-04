@@ -27,15 +27,15 @@ namespace IRCServiceNET.Entities
     public class ChannelTopic
     {
         /// <summary>
-        /// Gets or sets the value
+        /// Gets the value
         /// </summary>
         public string Value { get; protected set; }
         /// <summary>
-        /// Gets or sets when the topic was set
+        /// Gets when the topic was set
         /// </summary>
         public DateTime DateTime { get; protected set; }
         /// <summary>
-        /// Gets or sets who set the topic
+        /// Gets who set the topic
         /// </summary>
         public IHasNumeric SetBy { get; protected set; }
         /// <summary>
