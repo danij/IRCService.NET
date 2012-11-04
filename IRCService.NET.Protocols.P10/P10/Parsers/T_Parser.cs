@@ -45,7 +45,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
 
             if (channel == null)
             {
-                //topic for unknown channel
+                Service.AddLog("Topic change for unknown channel " + spaceSplit[2]);
                 return;
             }
 
