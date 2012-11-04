@@ -23,53 +23,33 @@ namespace IRCServiceNET.Protocols.P10
 {
     public class P10CommandFactory : ICommandFactory
     {
-        public NewServerCommand CreateNewServerCommand()
+        public AcknowledgeBurstCommand CreateAcknowledgeBurstCommand()
         {
-            return new P10NewServerCommand();
+            return new P10AcknowledgeBurstCommand();
         }
-        public NewUserCommand CreateNewUserCommand()
+        public AuthenticateUserCommand CreateAuthenticateUserCommand()
         {
-            return new P10NewUserCommand();
-        }
-        public ServerQuitCommand CreateServerQuitCommand()
-        {
-            return new P10ServerQuitCommand();
-        }
-        public UserQuitCommand CreateUserQuitCommand()
-        {
-            return new P10UserQuitCommand();
-        }
-        public ChangeUserModeCommand CreateChangeUserModeCommand()
-        {
-            return new P10ChangeUserModeCommand();
-        }
-        public ChangeNickCommand CreateChangeNickCommand()
-        {
-            return new P10ChangeNickCommand();
-        }
-        public SendMessageCommand CreateSendMessageCommand()
-        {
-            return new P10SendMessageCommand();
-        }
-        public UserDisconnectCommand CreateUserDisconnectCommand()
-        {
-            return new P10UserDisconnectCommand();
-        }
-        public JoinChannelCommand CreateJoinChannelCommand()
-        {
-            return new P10JoinChannelCommand();
+            return new P10AuthenticateUserCommand();
         }
         public ChangeChannelModeCommand CreateChangeChannelModeCommand()
         {
             return new P10ChangeChannelModeCommand();
         }
-        public PartChannelCommand CreatePartChannelCommand()
+        public ChangeChannelTopicCommand CreateChangeChannelTopicCommand()
         {
-            return new P10PartChannelCommand();
+            return new P10ChangeChannelTopicCommand();
         }
-        public KickUserCommand CreateKickUserCommand()
+        public ChangeNickCommand CreateChangeNickCommand()
         {
-            return new P10KickUserCommand();
+            return new P10ChangeNickCommand();
+        }
+        public ChangeUserModeCommand CreateChangeUserModeCommand()
+        {
+            return new P10ChangeUserModeCommand();
+        }
+        public ChannelBurstCommand CreateChannelBurstCommand()
+        {
+            return new P10ChannelBurstCommand();
         }
         public EndOfBurstCommand CreateEndOfBurstCommand()
         {
@@ -79,13 +59,37 @@ namespace IRCServiceNET.Protocols.P10
         {
             return new P10ErrorCommand();
         }
-        public AcknowledgeBurstCommand CreateAcknowledgeBurstCommand()
+        public InviteUserCommand CreateInviteUserCommand()
         {
-            return new P10AcknowledgeBurstCommand();
+            return new P10InviteUserCommand();
+        }
+        public JoinChannelCommand CreateJoinChannelCommand()
+        {
+            return new P10JoinChannelCommand();
+        }
+        public KickUserCommand CreateKickUserCommand()
+        {
+            return new P10KickUserCommand();
+        }
+        public NewServerCommand CreateNewServerCommand()
+        {
+            return new P10NewServerCommand();
+        }
+        public NewUserCommand CreateNewUserCommand()
+        {
+            return new P10NewUserCommand();
+        }
+        public PartChannelCommand CreatePartChannelCommand()
+        {
+            return new P10PartChannelCommand();
         }
         public PingReplyCommand CreatePingReplyCommand()
         {
             return new P10PingReplyCommand();
+        }
+        public SendMessageCommand CreateSendMessageCommand()
+        {
+            return new P10SendMessageCommand();
         }
         public ServerAuthenticationCommand CreateServerAuthenticationCommand()
         {
@@ -99,25 +103,22 @@ namespace IRCServiceNET.Protocols.P10
         {
             return new P10ServerNoticeCommand();
         }
-        public AuthenticateUserCommand CreateAuthenticateUserCommand()
+        public ServerQuitCommand CreateServerQuitCommand()
         {
-            return new P10AuthenticateUserCommand();
+            return new P10ServerQuitCommand();
         }
-        public ChannelBurstCommand CreateChannelBurstCommand()
+        public UserDisconnectCommand CreateUserDisconnectCommand()
         {
-            return new P10ChannelBurstCommand();
+            return new P10UserDisconnectCommand();
+        }
+        public UserQuitCommand CreateUserQuitCommand()
+        {
+            return new P10UserQuitCommand();
         }
         public WallopsCommand CreateWallopsCommand()
         {
             return new P10WallopsCommand();
         }
-        public ChangeChannelTopicCommand CreateChangeChannelTopicCommand()
-        {
-            return new P10ChangeChannelTopicCommand();
-        }
-        public InviteUserCommand CreateInviteUserCommand()
-        {
-            return new P10InviteUserCommand();
-        }
+
     }
 }

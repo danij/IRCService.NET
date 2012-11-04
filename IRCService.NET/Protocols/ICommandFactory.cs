@@ -29,6 +29,7 @@ namespace IRCServiceNET.Protocols
         AcknowledgeBurstCommand CreateAcknowledgeBurstCommand();
         AuthenticateUserCommand CreateAuthenticateUserCommand();
         ChangeChannelModeCommand CreateChangeChannelModeCommand();
+        ChangeChannelTopicCommand CreateChangeChannelTopicCommand();
         ChangeNickCommand CreateChangeNickCommand();
         ChangeUserModeCommand CreateChangeUserModeCommand();
         ChannelBurstCommand CreateChannelBurstCommand();
@@ -49,6 +50,5 @@ namespace IRCServiceNET.Protocols
         UserDisconnectCommand CreateUserDisconnectCommand();
         UserQuitCommand CreateUserQuitCommand();
         WallopsCommand CreateWallopsCommand();
-        ChangeChannelTopicCommand CreateChangeChannelTopicCommand();
     }
 }
