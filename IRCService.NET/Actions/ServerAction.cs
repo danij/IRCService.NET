@@ -95,5 +95,33 @@ namespace IRCServiceNET.Actions
             Plugin.Service.SendCommand(command);
             return true;
         }
+        /// <summary>
+        /// Changes a channel topic
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="value"></param>
+        /// <returns>TRUE if the topic is successfully changed</returns>
+        public bool ChangeChannelTopic(string channelName, string value)
+        {
+            if (String.IsNullOrEmpty(channelName))
+            {
+                throw new InvalidChannelException();
+            }
+
+            var channel = Plugin.Service.GetChannel(channelName);
+            if (channel == null)
+            {
+                throw new InvalidChannelException();
+            }
+
+            var command =
+                Plugin.Service.CommandFactory.CreateChangeChannelTopicCommand();
+            command.Channel = channel;
+            command.From = Server;
+            command.Value = value;
+
+            Plugin.Service.SendCommand(command);
+            return true;
+        }
     }
 }
