@@ -300,4 +300,16 @@ namespace IRCServiceNET
             : base(info, context) { }
     }
 
+    [Serializable]
+    public class CommandTooLongException : Exception
+    {
+        public CommandTooLongException() { }
+        public CommandTooLongException(string message) : base(message) { }
+        public CommandTooLongException(string message, Exception inner) : base(message, inner) { }
+        protected CommandTooLongException(
+          SerializationInfo info,
+          StreamingContext context)
+            : base(info, context) { }
+    }
+
 }

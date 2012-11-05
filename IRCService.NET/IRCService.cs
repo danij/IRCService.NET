@@ -736,6 +736,10 @@ namespace IRCServiceNET
             lock (lockObject)
             {
                 string commandString = command.ToString() + '\n';
+                if (commandString.Length > 511)
+                {
+                    throw new CommandTooLongException();
+                }
                 if (socket == null)
                 {
                     return;
