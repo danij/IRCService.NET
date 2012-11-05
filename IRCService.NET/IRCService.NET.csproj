@@ -70,6 +70,7 @@
     <Compile Include="Protocols\AuthenticateUserCommand.cs" />
     <Compile Include="Protocols\ChangeChannelTopicCommand.cs" />
     <Compile Include="Protocols\ChannelBurstCommand.cs" />
+    <Compile Include="Protocols\ClearModesCommand.cs" />
     <Compile Include="Protocols\ErrorCommand.cs" />
     <Compile Include="Protocols\InviteUserCommand.cs" />
     <Compile Include="Protocols\IParser.cs" />

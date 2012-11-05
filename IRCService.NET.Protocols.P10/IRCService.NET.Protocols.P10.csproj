@@ -51,6 +51,7 @@
     <Compile Include="P10\P10ChangeNickCommand.cs" />
     <Compile Include="P10\P10ChangeUserModeCommand.cs" />
     <Compile Include="P10\P10ChannelBurstCommand.cs" />
+    <Compile Include="P10\P10ClearModesCommand.cs" />
     <Compile Include="P10\P10CommandFactory.cs" />
     <Compile Include="P10\P10EndOfBurstCommand.cs" />
     <Compile Include="P10\P10ErrorCommand.cs" />

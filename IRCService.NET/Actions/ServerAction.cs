@@ -123,5 +123,26 @@ namespace IRCServiceNET.Actions
             Plugin.Service.SendCommand(command);
             return true;
         }
+        /// <summary>
+        /// Clears the channel's modes
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="modes"></param>
+        /// <returns></returns>
+        public bool ClearChannelModes(string channel,
+            string modes = "ntimpsrklov")
+        {
+            if (String.IsNullOrEmpty(channel) || channel[0] != '#')
+            {
+                throw new InvalidChannelException();
+            }
+            var command =
+                Plugin.Service.CommandFactory.CreateClearModesCommand();
+            command.From = Server;
+            command.Channel = channel;
+            command.Modes = modes;
+            Plugin.Service.SendCommand(command);
+            return true;
+        }
     }
 }

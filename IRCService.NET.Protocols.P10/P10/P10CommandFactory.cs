@@ -51,6 +51,10 @@ namespace IRCServiceNET.Protocols.P10
         {
             return new P10ChannelBurstCommand();
         }
+        public ClearModesCommand CreateClearModesCommand()
+        {
+            return new P10ClearModesCommand();
+        }
         public EndOfBurstCommand CreateEndOfBurstCommand()
         {
             return new P10EndOfBurstCommand();

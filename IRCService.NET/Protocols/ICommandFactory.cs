@@ -33,6 +33,7 @@ namespace IRCServiceNET.Protocols
         ChangeNickCommand CreateChangeNickCommand();
         ChangeUserModeCommand CreateChangeUserModeCommand();
         ChannelBurstCommand CreateChannelBurstCommand();
+        ClearModesCommand CreateClearModesCommand();
         EndOfBurstCommand CreateEndOfBurstCommand();
         ErrorCommand CreateErrorCommand();
         InviteUserCommand CreateInviteUserCommand();
