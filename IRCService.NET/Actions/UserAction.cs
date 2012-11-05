@@ -53,7 +53,7 @@ namespace IRCServiceNET.Actions
         {
             foreach (var item in Plugin.Service.Servers)
             {
-                if (item.GetChannel(channel) != null)
+                if ( ! item.IsControlled && item.GetChannel(channel) != null)
                 {
                     return true;
                 }
