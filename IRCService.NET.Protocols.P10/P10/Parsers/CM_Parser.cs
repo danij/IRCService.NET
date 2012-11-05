@@ -61,16 +61,8 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 }
             }
 
-            Channel channel = null;
+            Channel channel = Service.GetChannel(spaceSplit[2]) as Channel;
 
-            foreach (var item in Service.Servers)
-            {
-                channel = item.GetChannel(spaceSplit[2]) as Channel;
-                if (channel != null)
-                {
-                    break;
-                }
-            }
             if (channel == null)
             {
                 Service.AddLog("Channel " + spaceSplit[2] + " was not found");
