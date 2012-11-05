@@ -131,15 +131,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
             }
             else
             {
-                Channel channel = null;
-                foreach (var item in Service.Servers)
-                {
-                    channel = item.GetChannel(spaceSplit[2]) as Channel;
-                    if (channel != null)
-                    {
-                        break;
-                    }
-                }
+                Channel channel = Service.GetChannel(spaceSplit[2]) as Channel;
                 if (channel == null)
                 {
                     Service.AddLog("Channel " + spaceSplit[2] + " was not found");
@@ -188,7 +180,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                     if (item != from.Plugin) 
                                     { 
                                         item.OnChannelModeChange(
-                                            spaceSplit[2], 
+                                            channel, 
                                             spaceSplit[3][i], 
                                             change, 
                                             from, 
@@ -201,7 +193,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                     if (item != serverFrom.Plugin)
                                     { 
                                         item.OnChannelModeChange(
-                                            spaceSplit[2], 
+                                            channel, 
                                             spaceSplit[3][i], 
                                             change, 
                                             serverFrom, 
@@ -233,7 +225,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                     if (item != from.Plugin)
                                     {
                                         item.OnChannelLimit(
-                                            spaceSplit[2], 
+                                            channel, 
                                             limit, 
                                             from, 
                                             OpMode
@@ -245,7 +237,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                     if (item != serverFrom.Plugin)
                                     {
                                         item.OnChannelLimit(
-                                            spaceSplit[2], 
+                                            channel, 
                                             limit, 
                                             serverFrom, 
                                             OpMode
@@ -276,7 +268,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                     if (item != from.Plugin)
                                     {
                                         item.OnChannelKey(
-                                            spaceSplit[2],
+                                            channel,
                                             key, 
                                             from,
                                             OpMode
@@ -288,7 +280,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                     if (item != serverFrom.Plugin)
                                     {
                                         item.OnChannelKey(
-                                            spaceSplit[2],
+                                            channel,
                                             key,
                                             serverFrom,
                                             OpMode
@@ -322,7 +314,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                             if (change == true)
                                             { 
                                                 item.OnChannelAddBan(
-                                                    spaceSplit[2], 
+                                                    channel, 
                                                     newBan,
                                                     from,
                                                     OpMode
@@ -331,7 +323,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                             else
                                             { 
                                                 item.OnChannelRemoveBan(
-                                                    spaceSplit[2],
+                                                    channel,
                                                     newBan,
                                                     from,
                                                     OpMode
@@ -346,7 +338,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                             if (change == true) 
                                             { 
                                                 item.OnChannelAddBan(
-                                                    spaceSplit[2],
+                                                    channel,
                                                     newBan, 
                                                     serverFrom,
                                                     OpMode
@@ -355,7 +347,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                             else 
                                             { 
                                                 item.OnChannelRemoveBan(
-                                                    spaceSplit[2], 
+                                                    channel, 
                                                     newBan, 
                                                     serverFrom,
                                                     OpMode
@@ -415,7 +407,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                                 if (change == true)
                                                 {
                                                     item.OnChannelOp(
-                                                        spaceSplit[2], 
+                                                        channel, 
                                                         userAffected, 
                                                         from, 
                                                         OpMode
@@ -424,7 +416,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                                 else
                                                 {
                                                     item.OnChannelDeOp(
-                                                        spaceSplit[2],
+                                                        channel,
                                                         userAffected,
                                                         from, 
                                                         OpMode
@@ -439,7 +431,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                                 if (change == true)
                                                 {
                                                     item.OnChannelOp(
-                                                        spaceSplit[2], 
+                                                        channel, 
                                                         userAffected, 
                                                         serverFrom,
                                                         OpMode
@@ -447,7 +439,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                                 }
                                                 else { 
                                                     item.OnChannelDeOp(
-                                                        spaceSplit[2],
+                                                        channel,
                                                         userAffected, 
                                                         serverFrom,
                                                         OpMode
@@ -468,7 +460,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                                 if (change == true) 
                                                 { 
                                                     item.OnChannelVoice(
-                                                        spaceSplit[2],
+                                                        channel,
                                                         userAffected, 
                                                         from, 
                                                         OpMode
@@ -477,7 +469,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                                 else 
                                                 {
                                                     item.OnChannelDeVoice(
-                                                        spaceSplit[2], 
+                                                        channel, 
                                                         userAffected,
                                                         from, 
                                                         OpMode
@@ -492,7 +484,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                                 if (change == true)
                                                 {
                                                     item.OnChannelVoice(
-                                                        spaceSplit[2],
+                                                        channel,
                                                         userAffected, 
                                                         serverFrom,
                                                         OpMode
@@ -501,7 +493,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                                 else
                                                 {
                                                     item.OnChannelDeVoice(
-                                                        spaceSplit[2],
+                                                        channel,
                                                         userAffected, 
                                                         serverFrom,
                                                         OpMode
@@ -522,7 +514,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                                 if (change == true)
                                                 {
                                                     item.OnChannelHalfOp(
-                                                        spaceSplit[2],
+                                                        channel,
                                                         userAffected, 
                                                         from,
                                                         OpMode
@@ -531,7 +523,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                                 else 
                                                 {
                                                     item.OnChannelDeHalfOp(
-                                                        spaceSplit[2],
+                                                        channel,
                                                         userAffected, 
                                                         from,
                                                         OpMode
@@ -546,7 +538,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                                 if (change == true)
                                                 {
                                                     item.OnChannelHalfOp(
-                                                        spaceSplit[2], 
+                                                        channel, 
                                                         userAffected, 
                                                         serverFrom,
                                                         OpMode
@@ -554,7 +546,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                                                 }
                                                 else { 
                                                     item.OnChannelDeHalfOp(
-                                                        spaceSplit[2],
+                                                        channel,
                                                         userAffected, 
                                                         serverFrom,
                                                         OpMode

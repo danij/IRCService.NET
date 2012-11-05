@@ -134,7 +134,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
             if (from != null)
             {
                 Service.SendActionToPlugins(
-                    p => p.OnChannelClearModes(spaceSplit[2], spaceSplit[3], 
+                    p => p.OnChannelClearModes(channel, spaceSplit[3], 
                         from),
                     from.Plugin
                 );
@@ -142,7 +142,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
             else
             {
                 Service.SendActionToPlugins(
-                    p => p.OnChannelClearModes(spaceSplit[2], spaceSplit[3], 
+                    p => p.OnChannelClearModes(channel, spaceSplit[3], 
                         serverFrom),
                     serverFrom.Plugin
                 );

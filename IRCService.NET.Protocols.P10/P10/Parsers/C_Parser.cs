@@ -65,7 +65,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 if (currentChannel == null)
                 {
                     currentChannel = Service.CreateChannel(item, creationTimestamp);
-                    Service.SendActionToPlugins(p => p.OnNewChannel(item));
+                    Service.SendActionToPlugins(p => p.OnNewChannel(currentChannel));
                 }
                 else
                 {
@@ -80,7 +80,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                 if ((currentChannel as Channel).AddUser(user, true, false, false))
                 {
                     Service.SendActionToPlugins(
-                        p => p.OnChannelJoin(item, user),
+                        p => p.OnChannelJoin(currentChannel, user),
                         user.Plugin
                     );
                 }

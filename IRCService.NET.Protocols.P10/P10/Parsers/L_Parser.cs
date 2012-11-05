@@ -76,7 +76,7 @@ namespace IRCServiceNET.Protocols.P10.Parsers
                     continue;
                 }
                 Service.SendActionToPlugins(
-                    p => p.OnChannelPart(item, user, reason),
+                    p => p.OnChannelPart(leaveChannel, user, reason),
                     user.Plugin
                 );
             }

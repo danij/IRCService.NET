@@ -97,14 +97,14 @@ namespace IRCServiceNET.Protocols.P10.Parsers
             if (from != null)
             {
                 Service.SendActionToPlugins(
-                    p => p.OnChannelKick(spaceSplit[2], kickedUser, from, reason),
+                    p => p.OnChannelKick(channel, kickedUser, from, reason),
                     from.Plugin
                 );
             }
             else
             {
                 Service.SendActionToPlugins(
-                    p => p.OnChannelKick(spaceSplit[2], kickedUser, serverFrom, 
+                    p => p.OnChannelKick(channel, kickedUser, serverFrom, 
                         reason),
                     serverFrom.Plugin
                 );
