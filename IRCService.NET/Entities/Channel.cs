@@ -200,6 +200,14 @@ namespace IRCServiceNET.Entities
 
 #region Methods
         /// <summary>
+        /// Returns the string reprezentation of the channel
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return Name;
+        }
+        /// <summary>
         /// Gets a channel mode
         /// </summary>
         /// <param name="mode"></param>
