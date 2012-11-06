@@ -61,6 +61,114 @@ namespace IRCServiceNET.Actions
             return false;
         }
         /// <summary>
+        /// Performs a channel mode change for a large number of users
+        /// </summary>
+        /// <param name="channelName"></param>
+        /// <param name="mode"></param>
+        /// <param name="value"></param>
+        /// <param name="users"></param>
+        /// <returns></returns>
+        private int MassChannelMode(string channelName, char mode, bool value,
+            IEnumerable<IUser> users)
+        {
+            if (String.IsNullOrEmpty(channelName))
+            {
+                throw new InvalidChannelException();
+            }
+            if (users == null)
+            {
+                throw new ArgumentNullException("users");
+            }
+            if (mode != 'o' && mode != 'h' && mode != 'v')
+            {
+                throw new ArgumentException("Mode must be o, h or v");
+            }
+
+            var channel = Plugin.Service.GetChannel(channelName);
+            if (channel == null)
+            {
+                throw new InvalidChannelException();
+            }
+            if ( ! User.IsOnChannel(channelName))
+            {
+                throw new NotOnChannelException();
+            }
+
+            var entry = User.GetChannelEntry(channelName);
+            if ( ! entry.Op)
+            {
+                if ( ! entry.HalfOp || mode != 'v')
+                {
+                    throw new NotAChannelOperatorException();
+                }
+            }
+
+            var toChange = new List<IUser>();
+
+            foreach (var item in users)
+            {
+                var itemEntry = item.GetChannelEntry(channelName);
+                if (itemEntry == null)
+                {
+                    continue;
+                }
+                switch (mode)
+                {
+                    case 'o':
+                        if (itemEntry.Op != value)
+                        {
+                            toChange.Add(item);
+                        }
+                        break;
+                    case 'h':
+                        if (itemEntry.HalfOp != value)
+                        {
+                            toChange.Add(item);
+                        }
+                        break;
+                    case 'v':
+                        if (itemEntry.Voice != value)
+                        {
+                            toChange.Add(item);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if (toChange.Count < 1)
+            {
+                return 0;   
+            }
+
+            var modePrefix = value ? '+' : '-';
+            var currentUsers = new List<IUser>();
+            var result = 0;
+
+            foreach (var item in toChange)
+            {
+                currentUsers.Add(item);
+                if (currentUsers.Count >= 5)
+                {
+                    SetChannelMode(channelName, false, 
+                        modePrefix + new String(mode, currentUsers.Count), 
+                        currentUsers.ToArray());
+                    result += currentUsers.Count;
+                    currentUsers = new List<IUser>();
+                }
+            }
+            if (currentUsers.Count > 0)
+            {
+                SetChannelMode(channelName, false,
+                    modePrefix + new String(mode, currentUsers.Count),
+                    currentUsers.ToArray());
+                result += currentUsers.Count;
+            }
+
+            return result;
+        }
+        /// <summary>
         /// The user
         /// </summary>
         protected User User { get; set; }
@@ -740,6 +848,72 @@ namespace IRCServiceNET.Actions
             command.Parameters = parameters;
             Plugin.Service.SendCommand(command);
             return true;
+        }
+        /// <summary>
+        /// Sets op to a large number of users on a channel
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="value"></param>
+        /// <param name="users"></param>
+        /// <returns></returns>
+        public int MassOp(string channel, params IUser[] users)
+        {
+            return MassChannelMode(channel, 'o', true, users);
+        }
+        /// <summary>
+        /// Removes op from a large number of users on a channel
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="value"></param>
+        /// <param name="users"></param>
+        /// <returns></returns>
+        public int MassDeOp(string channel, params IUser[] users)
+        {
+            return MassChannelMode(channel, 'o', false, users);
+        }
+        /// <summary>
+        /// Sets halfop to a large number of users on a channel
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="value"></param>
+        /// <param name="users"></param>
+        /// <returns></returns>
+        public int MassHalfOp(string channel, params IUser[] users)
+        {
+            return MassChannelMode(channel, 'h', true, users);
+        }
+        /// <summary>
+        /// Removes half-op from a large number of users on a channel
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="value"></param>
+        /// <param name="users"></param>
+        /// <returns></returns>
+        public int MassDeHalfOp(string channel, params IUser[] users)
+        {
+            return MassChannelMode(channel, 'h', false, users);
+        }
+        /// <summary>
+        /// Sets voice to a large number of users on a channel
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="value"></param>
+        /// <param name="users"></param>
+        /// <returns></returns>
+        public int MassVoice(string channel, params IUser[] users)
+        {
+            return MassChannelMode(channel, 'v', true, users);
+        }
+        /// <summary>
+        /// Removes voice from a large number of users on a channel
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="value"></param>
+        /// <param name="users"></param>
+        /// <returns></returns>
+        public int MassDeVoice(string channel, params IUser[] users)
+        {
+            return MassChannelMode(channel, 'v', false, users);
         }
         /// <summary>
         /// Changes a channel topic
